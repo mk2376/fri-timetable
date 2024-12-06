@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.6/.schema/devbox.schema.json",
+  "packages": ["bun@latest", "stdenv.cc.cc.lib"],
+  "shell": {
+    "init_hook": [
+      "export LD_LIBRARY_PATH=./.devbox/nix/profile/default/lib",
+      "echo 'Welcome to devbox!' > /dev/null"
+    ],
+    "scripts": {
+      "test": ["echo \"Error: no test specified\" && exit 1"]
+    }
+  }
+}
