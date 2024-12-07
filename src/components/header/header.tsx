@@ -1,6 +1,6 @@
-import { component$ } from '@builder.io/qwik';
+import { component$ } from "@builder.io/qwik";
 
-export const Layout = component$(() => {
+export default component$(() => {
   return (
     <header class="flex justify-between items-center bg-blue-600 text-white p-4">
       <div class="text-xl font-bold">FRI</div>
