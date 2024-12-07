@@ -1,9 +1,13 @@
 {
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.6/.schema/devbox.schema.json",
-  "packages": ["bun@latest", "stdenv.cc.cc.lib"],
+  "packages": ["stdenv.cc.cc.lib", "nodejs@latest", "bun@latest"],
+  "env": {
+    "DEVBOX_COREPACK_ENABLED": "true"
+  },
   "shell": {
     "init_hook": [
-      "export LD_LIBRARY_PATH=./.devbox/nix/profile/default/lib",
+      //"export LD_LIBRARY_PATH=./.devbox/nix/profile/default/lib",
+      "bun install",
       "echo 'Welcome to devbox!' > /dev/null"
     ],
     "scripts": {
