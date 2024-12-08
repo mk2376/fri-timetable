@@ -1,13 +1,15 @@
 import { $, component$, type QRL } from '@builder.io/qwik';
-import { routeLoader$ } from '@builder.io/qwik-city';
-import { formAction$, useForm, valiForm$, type InitialValues, type SubmitHandler } from '@modular-forms/qwik';
+import { routeLoader$, useNavigate } from '@builder.io/qwik-city';
+import { formAction$, useForm, valiForm$, clearError, setValue, validate, type InitialValues, type SubmitHandler } from '@modular-forms/qwik';
+import styles from "./student-ID-form.module.css";
 import * as v from 'valibot';
 
 const StudentIDSchema = v.object({
   studentID: v.pipe(
     v.string(),
     v.nonEmpty('Please enter your student ID.'),
-    v.minLength(8, 'Your student ID must have 8 numbers.'),
+    v.digits("ID should consist only of numbers"),
+    v.length(8, 'Your student ID must have 8 numbers.'),
   ),
 });
 
@@ -24,7 +26,11 @@ export const useFormAction = formAction$<StudentIDForm>(() => {
 }, valiForm$(StudentIDSchema));
 
 export default component$(() => {
-  const [, { Form, Field}] = useForm<StudentIDForm>({
+  // useStylesScoped$(scoped)
+
+  const navigate = useNavigate();
+
+  const [studentIDForm, { Form, Field}] = useForm<StudentIDForm>({
     loader: useFormLoader(),
     action: useFormAction(),
     validate: valiForm$(StudentIDSchema),
@@ -33,38 +39,91 @@ export default component$(() => {
   const handleSubmit: QRL<SubmitHandler<StudentIDForm>> = $((values) => {
     // Runs on client
     console.log(values);
+
+     // Redirect to a different page after successful validation  
+    navigate(`/timetable?studentID=${values.studentID}`); // Replace '/timetable' with your desired route  
   });
  
   return (
-    <div class="relative flex h-10 w-full min-w-[200px] max-w-[24rem]">
-      <Form onSubmit$={handleSubmit}>
-
+    <div class="relative flex h-full items-center w-full">
+      <Form onSubmit$={handleSubmit} >
         <Field name="studentID">
-          {(field, props) => (
-              <div>
-                <input {...props}
-                  class="peer h-full w-full rounded-[7px] border border-blue-gray-200 bg-transparent px-3 py-2.5 pr-20 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                  //placeholder=""
-                  required
-                  type="studentID"
-                  //value={field.value}
-                />
-                {field.error && <div>{field.error}</div>}
+          {(field, props) => {
+            const isValid = !studentIDForm.invalid && field.value?.length == 8; // Check if the input is valid  
+
+            //console.log("isValid", isValid)
+
+            return (
+              <div class="relative w-full">
+                <div class="relative">
+                  <input
+                    {...props}
+                    class="peer h-full w-full rounded-[7px] border border-blue-gray-200 bg-transparent px-3 py-2.5 pr-20 text-sm text-blue-gray-700 placeholder-transparent focus:border-2 focus:border-pink-500 focus:outline-none"
+                    type="studentID"
+                    placeholder="Student ID" // Required for peer-placeholder to work
+                    required
+                    maxLength={8}
+                    inputMode="numeric" // Mobile keyboard
+                    onInput$={(e: any) => {
+                      // Sanitize input and update the form state  
+                      const value = e.target.value // getValue(studentIDForm, 'studentID') || "";
+
+                      //console.log(value)
+
+                      const sanitizedValue = value.replace(/[^0-9]/g, ""); // Remove non-numeric characters  
+                      e.target.value = sanitizedValue;
+                      setValue(studentIDForm, 'studentID', sanitizedValue) // Update the form state with the sanitized value
+                      
+                      if (sanitizedValue == "") {
+                        clearError(studentIDForm, 'studentID')
+                        return
+                      }
+
+                      validate(studentIDForm)
+                    }}
+                    onKeyDown$={(e) => {
+                      // Allow only numeric keys, backspace, delete, arrow keys, and tab
+                      if (
+                        !(
+                          (e.key >= "0" && e.key <= "9") || // Allow numbers
+                          e.key === "Backspace" || // Allow backspace
+                          e.key === "Delete" || // Allow delete
+                          e.key === "ArrowLeft" || // Allow left arrow
+                          e.key === "ArrowRight" || // Allow right arrow
+                          e.key === "Tab" || // Allow tab
+                          e.key === "Enter" // Allow Enter
+                        )
+                      ) {
+                        e.preventDefault(); // Block all other keys
+                      }
+                    }}
+                  />
+                  <label
+                    class="pointer-events-none absolute left-3 text-sm text-blue-gray-500 transition-all
+                      peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:-translate-x-1
+                      peer-placeholder-shown:text-blue-gray-400
+                      peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-pink-500
+                      peer-valid:top-2 peer-valid:text-[10px] peer-valid:-translate-y-1/2 peer-valid:-translate-x-1"
+                  >
+                    Student ID
+                  </label>
+                  <button
+                    class={`absolute right-1 top-1/2 -translate-y-1/2 z-10 rounded py-2 px-4 text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-lg focus:opacity-85 active:opacity-85
+                        ${isValid ? styles["animated-border"] : 'bg-pink-500'
+                      }`} type="submit"
+                  >
+                    Show timetable
+                  </button>
+                </div>
+                {field.error && (
+                  <div class="mt-1 text-red-500 text-xs">
+                    {field.error}
+                  </div>
+                )}
               </div>
-            )}
+            )
+          }}
         </Field>
-        
-        <label class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-pink-500 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-pink-500 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-pink-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-          Student ID
-        </label>
-        
-        <button
-          class="!absolute right-1 top-1 z-10 select-none rounded bg-pink-500 py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-pink-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none peer-placeholder-shown:pointer-events-none peer-placeholder-shown:bg-blue-gray-500 peer-placeholder-shown:opacity-50 peer-placeholder-shown:shadow-none"
-          type="submit"
-          data-ripple-light="true"
-        >
-          Show timetable
-        </button>
       </Form>
     </div>
   );
