@@ -2,7 +2,6 @@ import { component$, useVisibleTask$ } from '@builder.io/qwik';
 import {Timetable, Activity, Subject} from '../../models/Timetable'
 import { dummyTimetable } from './dummyTimetable'; // Zacasni podatki 
 import dayjs, { Dayjs } from 'dayjs';
-import en from 'dayjs/locale/en';
 
 type activityGroup = {
   activities: ActivityDisplay[],
@@ -235,22 +234,6 @@ export default component$(() => {
                     </div>
                   )
                 })
-                /*
-                dayGroupings.map((grouping) => {
-                  let groupHours = Array.from({ length: grouping.end.getHours() - grouping.start.getHours()}, (_, i) => i + grouping.start.getHours());
-                  console.log(groupHours)
-                  return (
-                    <div  key={`${day}-${grouping.start.toISOString()}-${grouping.end.toISOString()}`}
-                      class="flex flex-col">
-                      {
-                      
-                      }
-                    </div>
-                  );
-                })
-                */
-                
-
                 }
               </div>
             </div>
