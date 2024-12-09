@@ -26,7 +26,7 @@ export default component$(() => {
   const listPath = useSignal(location.url.searchParams.get('listPath') || ''); // Track the current list path  
 
   const tabs: Tab[] = [  
-    { id: 'level', label: 'Level', icon: 'Direction' },  
+    { id: 'level', label: 'Level of study', icon: 'Direction' },  
     { id: 'teachers', label: 'Teachers', icon: 'Professors' },  
     { id: 'classrooms', label: 'Classrooms', icon: 'Classrooms' },  
     { id: 'subjects', label: 'Subjects', icon: 'Subjects' },  
@@ -181,42 +181,51 @@ export default component$(() => {
         })}  
       </div>  
 
-      {/* Nested List */}  
-      <div class="mt-4 bg-gray-100 rounded-lg shadow-lg relative">  
-        {/* Back Button */}
-        {listPath.value && (
-          <button  class="absolute p-2 text-blue-500 hover:text-blue-600" 
-            onClick$={() => {  
-              const newPath = listPath.value.split('/').slice(0, -1).join('/'); // Go up one level  
-              listPath.value = newPath;  
-              navigate(`?tab=${activeTab.value}&listPath=${newPath}`); // Update the URL  
-            }}
-          >  
-            <Icons.ArrowLeft class="w-5 h-5 hover:fill-gray-500" />  
-          </button>  
-        )}  
 
-        <ul class="p-6">  
-          {currentList.value.map((item) => (  
-            <li key={item.id} class="m-2">  
-              <button class="text-blue-500 flex items-center justify-between text-left rounded-lg bg-gray-200 hover:bg-blue-100 shadow-md p-4"    
-                onClick$={() => {
-                  if (item.children) {
+      {/* Nested List */}    
+      <div class="mt-4 bg-gray-100 rounded-lg shadow-lg relative">    
+        {/* Back Button */}  
+        {listPath.value && (  
+          <button  
+            class="absolute p-2 text-blue-500 hover:text-blue-600 z-20"   
+            onClick$={() => {    
+              const newPath = listPath.value.split('/').slice(0, -1).join('/'); // Go up one level    
+              listPath.value = newPath;    
+              navigate(`?tab=${activeTab.value}&listPath=${newPath}`); // Update the URL    
+            }}  
+          >    
+            <Icons.ArrowLeft class="w-5 h-5 hover:fill-gray-500" />    
+          </button>    
+        )}    
+
+        {/* Add a wrapper div for the fading effect */}  
+        <div class={`relative max-h-[30rem] overflow-y-auto z-10 ${styles["mask-fade"]}`}>  
+          <ul class="p-6">    
+            {currentList.value.map((item) => (    
+              <li key={item.id} class="m-2">    
+                <button  
+                  class="text-blue-500 flex items-center justify-between text-left rounded-lg bg-gray-200 hover:bg-blue-100 shadow-md p-4"      
+                  onClick$={() => {  
                     const newPath = listPath.value ? `${listPath.value}/${item.id}` : item.id;    
-                    listPath.value = newPath;    
-                    navigate(`?tab=${activeTab.value}&listPath=${newPath}`); // Update the URL    
-                  }    
-                }}    
-              >  
-                <span>{item.label}</span>  
-                {item.children && (    
-                  <Icons.Tree class="ml-4 w-7 h-7 -my-10 flex-shrink-0 fill-blue-500" /> // Indicator for nested lists    
-                )}   
-              </button>     
-            </li>  
-          ))}  
-        </ul>  
-      </div>  
+
+                    if (item.children) { // Nested list  
+                      listPath.value = newPath;      
+                      navigate(`?tab=${activeTab.value}&listPath=${newPath}`); // Update the URL      
+                    } else { // Leaf  
+                      navigate(`/timetable?${activeTab.value}=${newPath}`); // Redirect to timetable  
+                    }  
+                  }}  
+                >    
+                  <span>{item.label}</span>    
+                  {item.children && (      
+                    <Icons.Tree class="ml-4 w-7 h-7 -my-10 flex-shrink-0 fill-blue-500" /> // Indicator for nested lists      
+                  )}  
+                </button>       
+              </li>    
+            ))}    
+          </ul>    
+        </div>  
+      </div>     
     </div>  
   );  
 });  
