@@ -6,7 +6,7 @@ import {
   ServiceWorkerRegister,
 } from "@builder.io/qwik-city";
 import { RouterHead } from "./components/router-head/router-head";
-
+import "./lib/dayjsConfig"
 import "./global.css";
 
 export default component$(() => {
