@@ -1,7 +1,18 @@
-import { component$, useVisibleTask$ } from '@builder.io/qwik';
-import {Timetable, Activity, Subject} from '../../models/Timetable'
+import { component$, useVisibleTask$, useSignal } from '@builder.io/qwik';
+import {Timetable, Activity} from '../../models/Timetable'
 import { dummyTimetable } from './dummyTimetable'; // Zacasni podatki 
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from "../../lib/dayjsConfig"
+import { Dayjs } from 'dayjs';
+
+type timetableProps = {
+  daysData: activityGroup[][]
+}
+
+type timetableColumnProps = {
+  dayData: activityGroup[],
+  day: string,
+  dayIndex: number
+}
 
 type activityGroup = {
   activities: ActivityDisplay[],
@@ -16,10 +27,188 @@ interface ActivityDisplay extends Activity {
   shortName: string,
 }
 
-export default component$(() => {
+export const DesktopTimetable = component$((props: timetableProps) => {
 
-  let startOfWeek = dayjs(new Date()).startOf('week').toDate();
-  let endOfWeek = dayjs(new Date()).endOf('week').toDate();
+  const days = ["Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek"];
+  const hours = Array.from({ length: 15 }, (_, i) => i + 7);
+
+  return (
+    <>
+      <div class="flex flex-row">
+        <div class="flex flex-col">
+          <div class="bg-gray-200 font-bold text-center border border-gray-300">
+            Ura
+          </div>
+          {hours.map((hour) => (
+            <div
+              key={hour}
+              class="flex h-16 border border-gray-300 bg-gray-100"
+            >
+              {`${hour}:00`}
+            </div>
+          ))}
+        </div>
+    
+        {days.map((day, index) => {
+          const dayGroupings = props.daysData[index];
+          return (
+            <div key={day} class="flex flex-col w-1/5 border border-gray-300">
+              <div class="flex flex-row bg-gray-200 font-bold text-center border-b border-gray-300">
+                {day}
+              </div>
+      
+              <div class="flex flex-row w-full">
+                <div class="flex flex-col w-full">
+                  <TimetableColumn dayData={dayGroupings} day={day} dayIndex={index}/>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+});
+
+const TimetableColumn = component$((props: timetableColumnProps) => {
+  const day = props.day
+  return (
+    <>
+    {
+      props.dayData.map((grouping) => {
+        const groupHours = Array.from({ length: grouping.end.getHours() - grouping.start.getHours()}, (_, i) => i + grouping.start.getHours());
+        const maxActivityCol = grouping.activities.reduce((acc, el) => (!acc || el.col > acc) ? el.col : acc, 0);
+        return (
+          <div key={`${day}-${grouping.start}-${grouping.end}`} class="flex flex-row">
+            {
+              Array.from({length: maxActivityCol + 1}, (_, i) => i).map((i) => {
+                return (
+                  <div key={i} class="flex flex-col w-full">
+                    {
+                      groupHours.map((hour) => {
+                        const activity = grouping.activities.find((activity) => (activity.dateFrom.getHours() == hour && activity.col == i));
+                        return (
+                          <>
+                          {
+                            activity
+                            ?
+                            <div
+                              key={`${day}-${hour}`}
+                              class="flex flex-row w-full h-16 border-b border-gray-300 relative"
+                            >
+                              <div
+                                key={activity.dateFrom.toString()}
+                                class="flex flex-col w-full h-full bg-blue-100 rounded"
+                                style={{
+                                  backgroundColor: `${activity.color}`,
+                                  height: `${dayjs(activity.dateTo).diff(dayjs(activity.dateFrom), "hour") * 4}rem`,
+                                }}
+                              >
+                                <div class="font-medium">{activity.shortName}</div>
+                                <div class="text-sm text-gray-700">
+                                  {activity.activityType} - {activity.location}
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                  {dayjs(activity.dateFrom).format("HH:mm")} - {dayjs(activity.dateTo).format("HH:mm")}
+                                </div>
+                                <div class="text-sm italic text-gray-600">
+                                  {activity.teacher.join(", ")}
+                                </div>
+                              </div>
+                            </div>
+                            :
+                            <div
+                              key={`${day}-${hour}`}
+                              class="flex flex-row w-full h-16 border-b border-gray-300 relative"
+                            >
+                            </div>
+                          }
+                          </>
+                        );
+                      })
+                    }
+                  </div>
+                );
+              })
+            }
+          </div>
+        )
+      })
+    }
+    </>
+  );
+})
+
+export const MobileTimetable = component$((props: timetableProps) => {
+  const selectedDay = "Torek";
+  
+  const days = ["Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek"];
+  const hours = Array.from({ length: 15 }, (_, i) => i + 7);
+
+  const selectedDayIndex = days.findIndex((el) => el == selectedDay);
+  useVisibleTask$(() => {
+    console.log(props.daysData[selectedDayIndex - 1]);
+    console.log(props.daysData[selectedDayIndex + 1]);
+  })
+  return (
+    <>
+      <div class="flex flex-row">
+        <div class="flex flex-col">
+          <div class="bg-gray-200 font-bold text-center border border-gray-300">
+            Ura
+          </div>
+          {hours.map((hour) => (
+            <div
+              key={hour}
+              class="flex h-16 border border-gray-300 bg-gray-100"
+            >
+              {`${hour}:00`}
+            </div>
+          ))}
+        </div>
+        <div class="flex flex-col w-1/4 border border-gray-300">
+          <div class="flex flex-row bg-gray-200 font-bold text-center border-b border-gray-300">
+            {days[selectedDayIndex - 1]}
+          </div>
+  
+          <div class="flex flex-row w-full">
+            <div class="flex flex-col w-full">
+                <TimetableColumn dayData={props.daysData[selectedDayIndex - 1]} day={days[selectedDayIndex - 1]} dayIndex={selectedDayIndex}/>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col w-1/2 border border-gray-300">
+          <div class="flex flex-row bg-gray-200 font-bold text-center border-b border-gray-300">
+            {days[selectedDayIndex]}
+          </div>
+  
+          <div class="flex flex-row w-full">
+            <div class="flex flex-col w-full">
+                <TimetableColumn dayData={props.daysData[selectedDayIndex]} day={days[selectedDayIndex]} dayIndex={selectedDayIndex}/>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col w-1/4 border border-gray-300">
+          <div class="flex flex-row bg-gray-200 font-bold text-center border-b border-gray-300">
+            {days[selectedDayIndex + 1]}
+          </div>
+  
+          <div class="flex flex-row w-full">
+            <div class="flex flex-col w-full">
+              <TimetableColumn dayData={props.daysData[selectedDayIndex + 1]} day={days[selectedDayIndex + 1]} dayIndex={selectedDayIndex}/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+})
+
+export default component$(() => {
+  const startOfWeek = dayjs(new Date()).startOf('week').toDate();
+  const endOfWeek = dayjs(new Date()).endOf('week').toDate();
   
   // Zacasna funkcija za prikaz
   // To bo treba itak fetchati iz backenda/karkoli bo ze, teden za tednom.
@@ -41,18 +230,15 @@ export default component$(() => {
     };
   }
 
-  const days = ["Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek"];
-  const hours = Array.from({ length: 15 }, (_, i) => i + 7);
   const timetable = getSelectedWeekTimetable(dummyTimetable, startOfWeek, endOfWeek)
 
-
   function groupByHourOverlap(day: Dayjs) {
-    let groupedActivities: activityGroup[] = [];
+    const groupedActivities: activityGroup[] = [];
     timetable.subjects.forEach((subject) => {
       subject.activities.forEach((activity) => {
         if (!dayjs(activity.dateFrom).isSame(day, 'day')) return;
 
-        let existingGroup = groupedActivities.find((el) => dayjs(activity.dateFrom).isBetween(el.start, el.end, "hour", "[)") || dayjs(activity.dateTo).isBetween(el.start, el.end, "hour", "(]"));
+        const existingGroup = groupedActivities.find((el) => dayjs(activity.dateFrom).isBetween(el.start, el.end, "hour", "[)") || dayjs(activity.dateTo).isBetween(el.start, el.end, "hour", "(]"));
         
         const activityDisplay: ActivityDisplay = {
           ...activity,
@@ -101,7 +287,6 @@ export default component$(() => {
     const endTime = day.hour(21); 
 
     for (const group of groupedActivities) {
-        console.log(group)
         if (dayjs(group.start).isAfter(currentTime)) {
             completeGroups.push({
                 activities: [],
@@ -126,120 +311,34 @@ export default component$(() => {
     return completeGroups;
   }
 
-  const tday = dayjs(startOfWeek).day(3)
-  const tue = groupByHourOverlap(tday);
-
-  function findMaximumGroupingsCol(groupings: activityGroup[]) {
-    let max = 0;
-    groupings.forEach((grouping) => {
-      let maxActivityCol = grouping.activities.reduce((acc, el) => (!acc || el.col > acc) ? el.col : acc, 0);
-      if (max < maxActivityCol) {
-        max = maxActivityCol
-      }
-    })
-    return max;
+  function getScheduleGroupingForEachDay(startOfWeek: Date) {
+    const groupingPerDay: activityGroup[][] = [];
+    for(let i = 2; i < 7; i++) {
+      groupingPerDay.push(groupByHourOverlap(dayjs(startOfWeek).day(i)));
+    }
+    return groupingPerDay;
   }
 
-  const abc = findMaximumGroupingsCol(tue)
+  const isMobile = useSignal(false);
+
+  const dayScheduleGroup = getScheduleGroupingForEachDay(startOfWeek);
   useVisibleTask$(() => {
-    console.log(timetable);
-    console.log(startOfWeek);
-    console.log(endOfWeek);
-    console.log(tue);
-    console.log(abc);
+    console.log(dayScheduleGroup);
+    const updateScreenWidth = () => {
+      isMobile.value = window.innerWidth <= 768;
+    };
+    updateScreenWidth();
+    window.addEventListener('resize', updateScreenWidth);
+    return () => window.removeEventListener('resize', updateScreenWidth);
   });
 
   return (
     <>
-      <div class="flex flex-row">
-        <div class="flex flex-col">
-          <div class="bg-gray-200 font-bold text-center border border-gray-300">
-            Ura
-          </div>
-          {hours.map((hour) => (
-            <div
-              key={hour}
-              class="flex h-16 border border-gray-300 bg-gray-100"
-            >
-              {`${hour}:00`}
-            </div>
-          ))}
-        </div>
-    
-        {days.map((day, index) => {
-          const dayGroupings = groupByHourOverlap(dayjs(startOfWeek).day(index + 2));
-          const maxCol = findMaximumGroupingsCol(dayGroupings);
-          return (
-            <div key={day} class="flex flex-col w-1/5 border border-gray-300">
-              <div class="flex flex-row bg-gray-200 font-bold text-center border-b border-gray-300">
-                {day}
-              </div>
-      
-              <div class="flex flex-row w-full">
-                {
-                
-                Array.from({length: maxCol + 1}, (_, i) => i).map((i) => {
-
-                  return (
-                    <div key={i} class="flex flex-col w-full">
-                      {
-                        dayGroupings.map((grouping) => {
-                            let groupHours = Array.from({ length: grouping.end.getHours() - grouping.start.getHours()}, (_, i) => i + grouping.start.getHours());
-                            
-                            return (
-                              groupHours.map((hour) => {
-                                const activity = grouping.activities.find((activity) => (activity.dateFrom.getHours() == hour && activity.col == i));
-                                return (
-                                  <>
-                                  {
-                                    activity
-                                    ?
-                                    <div
-                                      key={`${day}-${hour}`}
-                                      class="flex flex-row w-full h-16 border-b border-gray-300 relative"
-                                    >
-                                      <div
-                                        key={activity.dateFrom.toString()}
-                                        class="flex flex-col w-full h-full bg-blue-100 rounded"
-                                        style={{
-                                          backgroundColor: `${activity.color}`,
-                                          height: `${dayjs(activity.dateTo).diff(dayjs(activity.dateFrom), "hour") * 4}rem`,
-                                        }}
-                                      >
-                                        <div class="font-medium">{activity.shortName}</div>
-                                        <div class="text-sm text-gray-700">
-                                          {activity.activityType} - {activity.location}
-                                        </div>
-                                        <div class="text-sm text-gray-500">
-                                          {dayjs(activity.dateFrom).format("HH:mm")} - {dayjs(activity.dateTo).format("HH:mm")}
-                                        </div>
-                                        <div class="text-sm italic text-gray-600">
-                                          {activity.teacher.join(", ")}
-                                        </div>
-                                      </div>
-                                    </div>
-                                    :
-                                    <div
-                                      key={`${day}-${hour}`}
-                                      class="flex flex-row w-full h-16 border-b border-gray-300 relative"
-                                    >
-                                    </div>
-                                  }
-                                  </>
-                                );
-                              })
-                            )
-                          })
-                      }
-                    </div>
-                  )
-                })
-                }
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      {isMobile.value ? (
+        <MobileTimetable daysData={dayScheduleGroup} />
+      ) : (
+        <DesktopTimetable daysData={dayScheduleGroup}/>
+      )}
     </>
   );
 });

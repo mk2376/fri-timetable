@@ -1,5 +1,5 @@
 
-import {Timetable, Activity, Subject} from '../../models/Timetable'
+import {Timetable, Activity} from '../../models/Timetable'
 
 export const data = {
     subjects: [
