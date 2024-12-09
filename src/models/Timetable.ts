@@ -3,7 +3,7 @@ export type Activity = {
     location: string,
     teacher: string[],
     dateFrom: Date,
-    dateTo: Date,
+    dateTo: Date
 }
   
 export type Subject = {

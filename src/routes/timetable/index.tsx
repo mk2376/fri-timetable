@@ -5,9 +5,16 @@ import dayjs, { Dayjs } from 'dayjs';
 import en from 'dayjs/locale/en';
 
 type activityGroup = {
-  activities: Activity[],
+  activities: ActivityDisplay[],
   start: Date,
   end: Date,
+}
+
+interface ActivityDisplay extends Activity {
+  col: number,
+  color: string,
+  fullName: string,
+  shortName: string,
 }
 
 export default component$(() => {
@@ -46,15 +53,40 @@ export default component$(() => {
       subject.activities.forEach((activity) => {
         if (!dayjs(activity.dateFrom).isSame(day, 'day')) return;
 
-        let existingGroup = groupedActivities.find((el) => dayjs(el.start).isBetween(activity.dateFrom, activity.dateTo, "hour", "[)") || dayjs(el.end).isBetween(activity.dateFrom, activity.dateTo, "hour", "()"));
+        let existingGroup = groupedActivities.find((el) => dayjs(activity.dateFrom).isBetween(el.start, el.end, "hour", "[)") || dayjs(activity.dateTo).isBetween(el.start, el.end, "hour", "(]"));
+        
+        const activityDisplay: ActivityDisplay = {
+          ...activity,
+          col: 0,
+          color: subject.color,
+          fullName: subject.name.fullName,
+          shortName: subject.name.shortName
+        }
 
         if (existingGroup) {
-          existingGroup.activities.push(activity)
+          const takenCols = new Set(
+            existingGroup.activities
+              .filter(
+                (act) =>
+                  dayjs(activity.dateFrom).isBetween(act.dateFrom, act.dateTo, 'hour', '[)') ||
+                  dayjs(activity.dateTo).isBetween(act.dateFrom, act.dateTo, 'hour', '()')
+              )
+              .map((act) => act.col)
+          );
+  
+          let col = 0;
+          while (takenCols.has(col)) {
+            col++;
+          }
+
+          activityDisplay.col = col;
+
+          existingGroup.activities.push(activityDisplay)
           existingGroup.start = dayjs(existingGroup.start).isBetween(activity.dateFrom, activity.dateTo, "hour", "()") ? activity.dateFrom : existingGroup.start
           existingGroup.end = dayjs(existingGroup.end).isBetween(activity.dateFrom, activity.dateTo, "hour", "()") ? activity.dateTo : existingGroup.end
         } else {
           const newActivityGroup: activityGroup = {
-            activities: [activity],
+            activities: [activityDisplay],
             start: activity.dateFrom,
             end: activity.dateTo
           }
@@ -98,15 +130,18 @@ export default component$(() => {
   const tday = dayjs(startOfWeek).day(3)
   const tue = groupByHourOverlap(tday);
 
-  function findLargestGroupingActivityLength(groupings: any) {
-    return groupings.reduce((largestActivityLength: any, group: any) => {
-      return group.activities.length > largestActivityLength
-        ? group.activities.length
-        : largestActivityLength;
-    }, 0);
+  function findMaximumGroupingsCol(groupings: activityGroup[]) {
+    let max = 0;
+    groupings.forEach((grouping) => {
+      let maxActivityCol = grouping.activities.reduce((acc, el) => (!acc || el.col > acc) ? el.col : acc, 0);
+      if (max < maxActivityCol) {
+        max = maxActivityCol
+      }
+    })
+    return max;
   }
 
-  const abc = findLargestGroupingActivityLength(tue)
+  const abc = findMaximumGroupingsCol(tue)
   useVisibleTask$(() => {
     console.log(timetable);
     console.log(startOfWeek);
@@ -134,8 +169,7 @@ export default component$(() => {
     
         {days.map((day, index) => {
           const dayGroupings = groupByHourOverlap(dayjs(startOfWeek).day(index + 2));
-          const largestActivityLength = findLargestGroupingActivityLength(dayGroupings);
-          console.log(dayGroupings)
+          const maxCol = findMaximumGroupingsCol(dayGroupings);
           return (
             <div key={day} class="flex flex-col w-1/5 border border-gray-300">
               <div class="flex flex-row bg-gray-200 font-bold text-center border-b border-gray-300">
@@ -145,20 +179,21 @@ export default component$(() => {
               <div class="flex flex-row w-full">
                 {
                 
-                Array.from({length: largestActivityLength}, (_, i) => i).map((i) => {
+                Array.from({length: maxCol + 1}, (_, i) => i).map((i) => {
 
                   return (
                     <div key={i} class="flex flex-col w-full">
                       {
                         dayGroupings.map((grouping) => {
                             let groupHours = Array.from({ length: grouping.end.getHours() - grouping.start.getHours()}, (_, i) => i + grouping.start.getHours());
+                            
                             return (
                               groupHours.map((hour) => {
-                                const activity = i >= grouping.activities.length ? null : grouping.activities[i];
+                                const activity = grouping.activities.find((activity) => (activity.dateFrom.getHours() == hour && activity.col == i));
                                 return (
                                   <>
                                   {
-                                    (activity && activity.dateFrom.getHours() === hour)
+                                    activity
                                     ?
                                     <div
                                       key={`${day}-${hour}`}
@@ -168,10 +203,11 @@ export default component$(() => {
                                         key={activity.dateFrom.toString()}
                                         class="flex flex-col w-full h-full bg-blue-100 rounded"
                                         style={{
+                                          backgroundColor: `${activity.color}`,
                                           height: `${dayjs(activity.dateTo).diff(dayjs(activity.dateFrom), "hour") * 4}rem`,
                                         }}
                                       >
-                                        <div class="font-medium">H</div>
+                                        <div class="font-medium">{activity.shortName}</div>
                                         <div class="text-sm text-gray-700">
                                           {activity.activityType} - {activity.location}
                                         </div>

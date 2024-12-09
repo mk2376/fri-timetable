@@ -67,14 +67,14 @@ export const data = {
             },
             color: "#a5e9dd",
             activities: [
-              {
+              /*{
                 activityType: "P",
                 location: "P01",
                 teacher: ["Zoran Bosnić"],
                 day: "SRE",
                 hourStart: 7,
                 hourEnd: 10
-              },
+              },*/
               {
                 activityType: "LV",
                 location: "PR06",
@@ -157,6 +157,31 @@ export const data = {
                   hourEnd: 13
               }
           ]
+        },
+        {
+            name: {
+                shortName: "TEST",
+                fullName: "Testiranje"
+              },
+              color: "#ffff38",
+              activities: [
+                {
+                  activityType: "AV",
+                  location: "P04",
+                  teacher: ["Prosto prosto"],
+                  day: "TOR",
+                  hourStart: 13,
+                  hourEnd: 15
+                },
+                {
+                    activityType: "AV",
+                    location: "P05",
+                    teacher: ["Prosto prosto"],
+                    day: "TOR",
+                    hourStart: 14,
+                    hourEnd: 16
+                }
+            ]
         }
     ]
 }
