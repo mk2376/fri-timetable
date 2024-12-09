@@ -1,0 +1,50 @@
+/* Button with animated border */
+.animated-border {
+  border: none;
+  /* Remove default border */
+  background-color: #ff4081;
+  /* Button background color */
+  color: white;
+  /* Button text color */
+  overflow: hidden;
+  /* Ensure the pseudo-element stays within the button */
+}
+
+/* Pseudo-element for the animated border */
+.animated-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  /* Expand slightly outside the button for the border effect */
+  border-radius: inherit;
+  /* Match the button's border radius */
+  background: linear-gradient(90deg,
+      rgba(217, 15, 15, 0.2),
+      rgba(206, 97, 25, 0.6),
+      rgba(237, 14, 14, 0.2));
+  background-size: 200% 100%;
+  /* Make the gradient larger for smooth animation */
+  z-index: 0;
+  /* Place the pseudo-element behind the button content */
+  animation: light-strips 2s linear infinite;
+  /* Infinite animation */
+}
+
+/* Ensure the button content is above the pseudo-element */
+.animated-border>* {
+  position: relative;
+  z-index: 1;
+}
+
+/* Keyframes for the light strips animation */
+@keyframes light-strips {
+  0% {
+    background-position: 200% 0;
+    /* Start the gradient off-screen */
+  }
+
+  100% {
+    background-position: -200% 0;
+    /* Move the gradient across the border */
+  }
+}
