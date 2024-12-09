@@ -27,12 +27,12 @@ export const useServerTimeLoader = routeLoader$(() => {
 export default component$(() => {
   useStyles$(styles);
   return (
-    <>
+    <div class="flex flex-col min-h-screen">
       <Header />
-      <main>
+      <main class="flex-grow">
         <Slot />
       </main>
       <Footer />
-    </>
+    </div>
   );
 });
