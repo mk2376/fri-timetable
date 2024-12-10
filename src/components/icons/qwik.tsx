@@ -133,7 +133,7 @@ export const Classrooms = component$((props: QwikIntrinsicElements['svg'] & { co
   )
 });
 
-export const Subjects =  component$((props: QwikIntrinsicElements['svg'] & { color?: string }) => {
+export const Subjects = component$((props: QwikIntrinsicElements['svg'] & { color?: string }) => {
   // https://www.svgrepo.com/svg/245620/translator-subject
   const { color = 'black' } = props;
   
@@ -226,7 +226,7 @@ export const Subjects =  component$((props: QwikIntrinsicElements['svg'] & { col
   )
 });
 
-export const ArrowLeft =  component$((props: QwikIntrinsicElements['svg'] & { color?: string }) => {
+export const ArrowLeft = component$((props: QwikIntrinsicElements['svg'] & { color?: string }) => {
   // https://www.svgrepo.com/svg/67833/left-arrow
   const { color = 'black' } = props;
   
@@ -239,7 +239,7 @@ export const ArrowLeft =  component$((props: QwikIntrinsicElements['svg'] & { co
   )
 });
 
-export const Tree =  component$((props: QwikIntrinsicElements['svg'] & { color?: string }) => {
+export const Tree = component$((props: QwikIntrinsicElements['svg'] & { color?: string }) => {
   // https://www.svgrepo.com/svg/67833/left-arrow
   const { color = 'black' } = props;
   

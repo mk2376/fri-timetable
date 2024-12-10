@@ -139,20 +139,18 @@ export default component$(() => {
     }  
   });  
 
-  console.log("isMobile.value", isMobile.value)
-
   return (  
     <div class="mx-auto">
       {/* Main Container */} 
       <div class="flex flex-col md:flex-row md:space-x-4">  
         {/* Tabs */} 
-        <div class="rounded-lg border-gray-300
+        <div class={`rounded-lg border-gray-300
           flex items-center justify-between md:justify-start md:flex-col
-          shadow-[0px_-15px_15px_-10px_rgba(0,0,0,0.3)] md:shadow-[15px_0px_10px_-10px_rgba(0,0,0,0.3)]
+          shadow-top md:shadow-right
           border-t md:border-t-0 md:border-r
           fixed bottom-0 left-0 md:relative
           m-2 w-[calc(100%-16px)] md:w-auto
-          h-fit"
+          h-fit z-10`}
         >
           {/* Light effect position container */}  
           <div  
@@ -173,12 +171,12 @@ export default component$(() => {
           >  
             {/* Animated light effect */}  
             <div  
-              class={styles["animate-light-warp"]}  
+              class={`${styles["animate-light-warp"]}`}  
               style={{  
                 position: "absolute",  
                 inset: 0,  
                 background:  
-                  "radial-gradient(ellipse at center bottom, rgba(59, 130, 246, 0.8), rgba(59, 130, 246, 0.4) 50%, rgba(59, 130, 246, 0) 100%)",  
+                  "radial-gradient(ellipse at center bottom, rgba(222, 54, 38, 0.8), rgba(222, 54, 38, 0.4) 50%, rgba(222, 54, 38, 0) 100%)",  
                 filter: "blur(10px)",  
               }}  
             />  
@@ -186,7 +184,7 @@ export default component$(() => {
 
           {/* Active tab indicator */}
           <div  
-            class="absolute bottom-0 left-0 h-10 bg-blue-500 rounded-lg transition-all duration-300 ease-in-out z-0 md:top-0 md:left-0 md:h-auto md:w-1"  
+            class="absolute bottom-0 left-0 h-10 bg-primary rounded-lg transition-all duration-300 ease-in-out md:top-0 md:left-0 md:h-auto md:w-1"  
             style={{  
               width: isMobile.value
                 ? `${100 / tabs.length}%`
@@ -206,9 +204,9 @@ export default component$(() => {
             const isActive = activeTab.value === tab.id;  
 
             return (  
-              <button class={`relative z-10 flex flex-col md:flex-row
+              <button class={`z-10 relative flex flex-col md:flex-row
                 items-center justify-center w-full py-2 px-4 text-xs md:text-base font-medium
-                ${isActive ? "text-white font-bold" : "text-gray-500"}
+                ${isActive ? "white font-bold" : "text-text"}
                 md:justify-start md:py-4`}
                 key={tab.id}  
                 onClick$={() => {  
@@ -220,7 +218,7 @@ export default component$(() => {
               >  
                 <Icon class="w-10 h-10 md:w-7 md:h-7
                   m-0.5 md:mr-2"  
-                  color={isActive ? "white" : "black"}  
+                  color={isActive ? "white" : "var(--text-color)"}  
                 />  
                 <span>{tab.label}</span>  
               </button>  
@@ -237,7 +235,7 @@ export default component$(() => {
           {/* Back Button */}  
           {listPath.value && (  
             <button
-              class="absolute p-2 text-blue-500 hover:text-blue-600 z-20 right-0 top-1"
+              class="z-10 absolute p-2 right-0 top-1"
               onClick$={() => {  
                 const newPath = listPath.value  
                   .split("/")  
@@ -247,13 +245,13 @@ export default component$(() => {
                 navigate(`?tab=${activeTab.value}&listPath=${newPath}`); // Update the URL  
               }}  
             >  
-              <Icons.ArrowLeft class="w-5 h-5 hover:fill-gray-500" />  
+              <Icons.ArrowLeft class="w-5 h-5 fill-accent hover:fill-accent-hover" />  
             </button>  
           )}  
 
           {/* Add a wrapper div for the fading effect */}  
           <div  
-            class={`relative h-[calc(100vh-180px-80px)] md:max-h-[40rem] overflow-y-auto z-10 ${styles["mask-fade"]}`}  
+            class={`relative h-[calc(100vh-220px-80px)] md:max-h-[40rem] overflow-y-auto ${styles["mask-fade"]}`}  
           >  
             <ul class="p-6"
               style="transform: scaleX(-1)"  
@@ -261,7 +259,7 @@ export default component$(() => {
               {currentList.value.map((item) => (  
                 <li key={item.id} class="m-2">  
                   <button  
-                    class="text-blue-500 flex items-center justify-between text-left rounded-lg bg-gray-200 hover:bg-blue-100 shadow-lg p-4"  
+                    class="text-text flex items-center justify-between text-left rounded-lg bg-accent hover:bg-accent-hover shadow-md dark:shadow-white p-4"  
                     onClick$={() => {  
                       const newPath = listPath.value
                         ? `${listPath.value}/${item.id}`
@@ -281,9 +279,9 @@ export default component$(() => {
                       }  
                     }}  
                   >  
-                    <span>{item.label}</span>  
-                    {item.children && (  
-                      <Icons.Tree class="ml-4 w-7 h-7 -my-10 flex-shrink-0 fill-blue-500" />  
+                    <span>{item.label}</span>
+                    {item.children && (
+                      <Icons.Tree class="ml-4 w-7 h-7 -my-10 flex-shrink-0 fill-primary" />  
                     )}  
                   </button>  
                 </li>  
