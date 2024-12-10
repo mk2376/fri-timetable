@@ -148,7 +148,7 @@ export default component$(() => {
         {/* Tabs */} 
         <div class="rounded-lg border-gray-300
           flex items-center justify-between md:justify-start md:flex-col
-          shadow-[0px_-15px_15px_-10px_rgba(0,0,0,0.3)] md:shadow-[15px_0px_15px_-10px_rgba(0,0,0,0.3)]
+          shadow-[0px_-15px_15px_-10px_rgba(0,0,0,0.3)] md:shadow-[15px_0px_10px_-10px_rgba(0,0,0,0.3)]
           border-t md:border-t-0 md:border-r
           fixed bottom-0 left-0 md:relative
           m-2 w-[calc(100%-16px)] md:w-auto
