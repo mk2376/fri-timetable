@@ -5,7 +5,8 @@ import dayjs from "../../lib/dayjsConfig"
 import { Dayjs } from 'dayjs';
 
 type timetableProps = {
-  daysData: activityGroup[][]
+  daysData: activityGroup[][],
+  possibleDays: string[]
 }
 
 type timetableColumnProps = {
@@ -29,7 +30,7 @@ interface ActivityDisplay extends Activity {
 
 export const DesktopTimetable = component$((props: timetableProps) => {
 
-  const days = ["Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek"];
+  const days = props.possibleDays;
   const hours = Array.from({ length: 15 }, (_, i) => i + 7);
 
   return (
@@ -142,14 +143,11 @@ const TimetableColumn = component$((props: timetableColumnProps) => {
 export const MobileTimetable = component$((props: timetableProps) => {
   const selectedDay = "Torek";
   
-  const days = ["Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek"];
+  const days = props.possibleDays;
   const hours = Array.from({ length: 15 }, (_, i) => i + 7);
 
   const selectedDayIndex = days.findIndex((el) => el == selectedDay);
-  useVisibleTask$(() => {
-    console.log(props.daysData[selectedDayIndex - 1]);
-    console.log(props.daysData[selectedDayIndex + 1]);
-  })
+
   return (
     <>
       <div class="flex flex-row">
@@ -166,23 +164,47 @@ export const MobileTimetable = component$((props: timetableProps) => {
             </div>
           ))}
         </div>
-        <div class="flex flex-col w-1/4 border border-gray-300">
+        
+        <div class="flex flex-col w-full border border-gray-300">
+          
           <div class="flex flex-row bg-gray-200 font-bold text-center border-b border-gray-300">
-            {days[selectedDayIndex - 1]}
-          </div>
-  
-          <div class="flex flex-row w-full">
-            <div class="flex flex-col w-full">
-                <TimetableColumn dayData={props.daysData[selectedDayIndex - 1]} day={days[selectedDayIndex - 1]} dayIndex={selectedDayIndex}/>
-            </div>
-          </div>
-        </div>
+            {
+              days.map((day, index) => {
 
-        <div class="flex flex-col w-1/2 border border-gray-300">
-          <div class="flex flex-row bg-gray-200 font-bold text-center border-b border-gray-300">
-            {days[selectedDayIndex]}
+                return (
+                  index < selectedDayIndex
+                  ?
+                    <div class="flex flex-col">
+                      {day}
+                    </div>
+                  :
+                  <>
+                  </>
+                );
+              })
+            }
+            <div class="flex flex-col w-1/2">
+              {days[selectedDayIndex]}
+            </div>
+            {
+            days.map((day, index) => {
+
+              return (
+                index > selectedDayIndex
+                ?
+                  <div class="flex flex-col">
+                    {day}
+                  </div>
+                :
+                <>
+                </>
+              );
+            })
+          }
           </div>
   
+         
+
           <div class="flex flex-row w-full">
             <div class="flex flex-col w-full">
                 <TimetableColumn dayData={props.daysData[selectedDayIndex]} day={days[selectedDayIndex]} dayIndex={selectedDayIndex}/>
@@ -190,17 +212,6 @@ export const MobileTimetable = component$((props: timetableProps) => {
           </div>
         </div>
 
-        <div class="flex flex-col w-1/4 border border-gray-300">
-          <div class="flex flex-row bg-gray-200 font-bold text-center border-b border-gray-300">
-            {days[selectedDayIndex + 1]}
-          </div>
-  
-          <div class="flex flex-row w-full">
-            <div class="flex flex-col w-full">
-              <TimetableColumn dayData={props.daysData[selectedDayIndex + 1]} day={days[selectedDayIndex + 1]} dayIndex={selectedDayIndex}/>
-            </div>
-          </div>
-        </div>
       </div>
     </>
   );
@@ -332,12 +343,14 @@ export default component$(() => {
     return () => window.removeEventListener('resize', updateScreenWidth);
   });
 
+  const days = ["Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek"]
+
   return (
     <>
       {isMobile.value ? (
-        <MobileTimetable daysData={dayScheduleGroup} />
+        <MobileTimetable daysData={dayScheduleGroup} possibleDays={days}/>
       ) : (
-        <DesktopTimetable daysData={dayScheduleGroup}/>
+        <DesktopTimetable daysData={dayScheduleGroup} possibleDays={days}/>
       )}
     </>
   );
