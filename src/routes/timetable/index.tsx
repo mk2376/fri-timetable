@@ -28,48 +28,6 @@ interface ActivityDisplay extends Activity {
   shortName: string,
 }
 
-export const DesktopTimetable = component$((props: timetableProps) => {
-
-  const days = props.possibleDays;
-  const hours = Array.from({ length: 15 }, (_, i) => i + 7);
-
-  return (
-    <>
-      <div class="flex flex-row">
-        <div class="flex flex-col">
-          <div class="bg-gray-200 font-bold text-center border border-gray-300">
-            Ura
-          </div>
-          {hours.map((hour) => (
-            <div
-              key={hour}
-              class="flex h-16 border border-gray-300 bg-gray-100"
-            >
-              {`${hour}:00`}
-            </div>
-          ))}
-        </div>
-    
-        {days.map((day, index) => {
-          const dayGroupings = props.daysData[index];
-          return (
-            <div key={day} class="flex flex-col w-1/5 border border-gray-300">
-              <div class="flex flex-row bg-gray-200 font-bold text-center border-b border-gray-300">
-                {day}
-              </div>
-      
-              <div class="flex flex-row w-full">
-                <div class="flex flex-col w-full">
-                  <TimetableColumn dayData={dayGroupings} day={day} dayIndex={index}/>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </>
-  );
-});
 
 const TimetableColumn = component$((props: timetableColumnProps) => {
   const day = props.day
@@ -80,7 +38,7 @@ const TimetableColumn = component$((props: timetableColumnProps) => {
         const groupHours = Array.from({ length: grouping.end.getHours() - grouping.start.getHours()}, (_, i) => i + grouping.start.getHours());
         const maxActivityCol = grouping.activities.reduce((acc, el) => (!acc || el.col > acc) ? el.col : acc, 0);
         return (
-          <div key={`${day}-${grouping.start}-${grouping.end}`} class="flex flex-row">
+          <div key={`${day}-${grouping.start}-${grouping.end}`} class="flex flex-row ">
             {
               Array.from({length: maxActivityCol + 1}, (_, i) => i).map((i) => {
                 return (
@@ -99,21 +57,24 @@ const TimetableColumn = component$((props: timetableColumnProps) => {
                             >
                               <div
                                 key={activity.dateFrom.toString()}
-                                class="flex flex-col w-full h-full bg-blue-100 rounded"
+                                class="flex flex-col w-full h-full bg-blue-100 opacity-70 rounded-lg p-1 z-10 m-1"
                                 style={{
                                   backgroundColor: `${activity.color}`,
-                                  height: `${dayjs(activity.dateTo).diff(dayjs(activity.dateFrom), "hour") * 4}rem`,
+                                  height: `${dayjs(activity.dateTo).diff(dayjs(activity.dateFrom), "hour") * 3.7}rem`,
                                 }}
                               >
-                                <div class="font-medium">{activity.shortName}</div>
-                                <div class="text-sm text-gray-700">
-                                  {activity.activityType} - {activity.location}
+                                <div class="font-bold mb-1">
+                                  {activity.shortName}_{activity.activityType}
                                 </div>
-                                <div class="text-sm text-gray-500">
-                                  {dayjs(activity.dateFrom).format("HH:mm")} - {dayjs(activity.dateTo).format("HH:mm")}
-                                </div>
-                                <div class="text-sm italic text-gray-600">
+                                <div class="text-sm italic mb-2">
                                   {activity.teacher.join(", ")}
+                                </div>
+                                <div class="text-m font-semibold">
+                                  {activity.location}
+                                </div>
+                                
+                                <div class="text-sm text-gray-500 mt-auto">
+                                  {dayjs(activity.dateFrom).format("HH:mm")} - {dayjs(activity.dateTo).format("HH:mm")}
                                 </div>
                               </div>
                             </div>
@@ -140,74 +101,106 @@ const TimetableColumn = component$((props: timetableColumnProps) => {
   );
 })
 
-export const MobileTimetable = component$((props: timetableProps) => {
-  const selectedDay = "Torek";
-  
+const DesktopTimetable = component$((props: timetableProps) => {
   const days = props.possibleDays;
   const hours = Array.from({ length: 15 }, (_, i) => i + 7);
 
-  const selectedDayIndex = days.findIndex((el) => el == selectedDay);
+  return (
+    <div class="flex flex-row bg-white shadow-md rounded-lg overflow-auto">
+      <div class="flex flex-col bg-white sticky left-0 z-50">
+        <div class="py-4 border border-gray-400">
+          <br />
+        </div>
+        {hours.map((hour) => (
+          <div key={hour} class="flex h-16 pl-2 border border-gray-400">
+            <div class="text-right">
+              {`${dayjs().hour(hour).format("HH")}:00`}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {days.map((day, index) => {
+        const dayGroupings = props.daysData[index];
+        return (
+          <div key={day} class="flex flex-col min-w-[20%] border border-gray-800">
+            <div class="flex flex-row py-4 font-bold text-center border-b border-gray-600">
+              <div class="flex flex-col w-full">{day}</div>
+            </div>
+
+            <div class="flex flex-row w-full">
+              <div class="flex flex-col w-full">
+                <TimetableColumn
+                  dayData={dayGroupings}
+                  day={day}
+                  dayIndex={index}
+                />
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+});
+
+
+const MobileTimetable = component$((props: timetableProps) => {
+  const selectedDaySignal = useSignal("Torek"); // Signal for the currently selected day
+  
+  const days = props.possibleDays;
+  const daysShort = ["PON", "TOR", "SRE", "ČET", "PET"];
+  const hours = Array.from({ length: 15 }, (_, i) => i + 7);
 
   return (
     <>
       <div class="flex flex-row">
         <div class="flex flex-col">
-          <div class="bg-gray-200 font-bold text-center border border-gray-300">
-            Ura
+          <div class="py-4 border border-gray-400">
+            <br />
           </div>
           {hours.map((hour) => (
             <div
               key={hour}
-              class="flex h-16 border border-gray-300 bg-gray-100"
+              class="flex h-16 pl-2 border border-gray-400"
             >
-              {`${hour}:00`}
+              <div class="text-right">
+                {`${dayjs().hour(hour).format('HH')}:00`}
+              </div>
             </div>
           ))}
         </div>
-        
-        <div class="flex flex-col w-full border border-gray-300">
-          
-          <div class="flex flex-row bg-gray-200 font-bold text-center border-b border-gray-300">
-            {
-              days.map((day, index) => {
 
-                return (
-                  index < selectedDayIndex
-                  ?
-                    <div class="flex flex-col">
-                      {day}
-                    </div>
-                  :
-                  <>
-                  </>
-                );
-              })
-            }
-            <div class="flex flex-col w-1/2">
-              {days[selectedDayIndex]}
-            </div>
-            {
-            days.map((day, index) => {
+        <div class="flex flex-col w-full border border-gray-800">
+          <div class="flex flex-row sticky top-0 z-50 font-bold text-center items-center shadow-lg border-b border-gray-600">
+            {daysShort.map((day, index) => (
+              <div
+                key={index}
+                class={`flex flex-col justify-center items-center w-full py-4 cursor-pointer transition-all relative ${
+                  selectedDaySignal.value === days[index]
+                    ? 'font-bold text-black w-1/3'
+                    : 'text-gray-500 hover:text-gray-700 w-1/4'
+                }`}
+                onClick$={() => (selectedDaySignal.value = days[index])}
+              >
+                <span>{day}</span>
 
-              return (
-                index > selectedDayIndex
-                ?
-                  <div class="flex flex-col">
-                    {day}
-                  </div>
-                :
-                <>
-                </>
-              );
-            })
-          }
+                <div
+                  class={`absolute bottom-0 left-0 h-1 w-full transition-all duration-300 ${
+                    selectedDaySignal.value === days[index] ? 'bg-blue-500' : 'bg-transparent'
+                  }`}
+                />
+              </div>
+            ))}
           </div>
-  
-         
 
           <div class="flex flex-row w-full">
             <div class="flex flex-col w-full">
-                <TimetableColumn dayData={props.daysData[selectedDayIndex]} day={days[selectedDayIndex]} dayIndex={selectedDayIndex}/>
+              <TimetableColumn
+                dayData={props.daysData[days.findIndex((el) => el === selectedDaySignal.value)]}
+                day={selectedDaySignal.value}
+                dayIndex={days.findIndex((el) => el === selectedDaySignal.value)}
+              />
             </div>
           </div>
         </div>
@@ -215,7 +208,7 @@ export const MobileTimetable = component$((props: timetableProps) => {
       </div>
     </>
   );
-})
+});
 
 export default component$(() => {
   const startOfWeek = dayjs(new Date()).startOf('week').toDate();
@@ -331,10 +324,12 @@ export default component$(() => {
   }
 
   const isMobile = useSignal(false);
+  const isClientLoaded = useSignal(false);
 
   const dayScheduleGroup = getScheduleGroupingForEachDay(startOfWeek);
+
   useVisibleTask$(() => {
-    console.log(dayScheduleGroup);
+    isClientLoaded.value = true;
     const updateScreenWidth = () => {
       isMobile.value = window.innerWidth <= 768;
     };
@@ -343,6 +338,12 @@ export default component$(() => {
     return () => window.removeEventListener('resize', updateScreenWidth);
   });
 
+  
+  if(!isClientLoaded.value) {
+    return (
+      <></>
+    );
+  }
   const days = ["Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek"]
 
   return (
