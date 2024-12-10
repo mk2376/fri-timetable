@@ -45,7 +45,7 @@ export default component$(() => {
   });
  
   return (
-    <div class="relative flex h-full items-center w-full">
+    <div class="relative h-20 flex items-center justify-center md:items-start">
       <Form onSubmit$={handleSubmit} >
         <Field name="studentID">
           {(field, props) => {
@@ -54,11 +54,13 @@ export default component$(() => {
             //console.log("isValid", isValid)
 
             return (
-              <div class="relative w-full">
+              <div class="relative w-full md:w-[22rem]">
                 <div class="relative">
                   <input
                     {...props}
-                    class="peer h-full w-full rounded-[7px] border border-blue-gray-200 bg-transparent px-3 py-2.5 pr-20 text-sm text-blue-gray-700 placeholder-transparent focus:border-2 focus:border-pink-500 focus:outline-none"
+                    class="peer h-full w-full rounded-[7px] border border-blue-gray-200 bg-transparent px-3 pt-[13px] pb-2.5 pr-20
+                      text-sm md:text-base text-blue-gray-700 placeholder-transparent
+                      focus:border-2 focus:border-pink-500 focus:outline-none"
                     type="studentID"
                     placeholder="Student ID" // Required for peer-placeholder to work
                     required
@@ -66,7 +68,7 @@ export default component$(() => {
                     inputMode="numeric" // Mobile keyboard
                     onInput$={(e: any) => {
                       // Sanitize input and update the form state  
-                      const value = e.target.value // getValue(studentIDForm, 'studentID') || "";
+                      const value = e.target.value
 
                       //console.log(value)
 
@@ -76,10 +78,19 @@ export default component$(() => {
                       
                       if (sanitizedValue == "") {
                         clearError(studentIDForm, 'studentID')
+                        console.log("onInput clearError")
                         return
                       }
 
                       validate(studentIDForm)
+                    }}
+                    onFocusOut$={(e: any) => {
+                      const value = e.target.value
+                      if (value == "") {
+                        clearError(studentIDForm, 'studentID')
+                        console.log("onFocusOut clearError")
+                        return
+                      }
                     }}
                     onKeyDown$={(e) => {
                       // Allow only numeric keys, backspace, delete, arrow keys, and tab
@@ -99,7 +110,9 @@ export default component$(() => {
                     }}
                   />
                   <label
-                    class="pointer-events-none absolute left-3 text-sm text-blue-gray-500 transition-all
+                    class="pointer-events-none absolute text-blue-gray-500 transition-all
+                      left-3 md:left-6
+                      text-sm md:text-base
                       peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:-translate-x-1
                       peer-placeholder-shown:text-blue-gray-400
                       peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-pink-500
@@ -108,7 +121,7 @@ export default component$(() => {
                     Student ID
                   </label>
                   <button
-                    class={`absolute right-1 top-1/2 -translate-y-1/2 z-10 rounded py-2 px-4 text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-lg focus:opacity-85 active:opacity-85
+                    class={`absolute right-1.5 top-1/2 -translate-y-1/2 z-10 rounded py-2 px-4 text-xs md:text-sm font-bold uppercase text-white shadow-md transition-all hover:shadow-lg focus:opacity-85 active:opacity-85
                         ${isValid ? styles["animated-border"] : 'bg-pink-500'
                       }`} type="submit"
                   >
@@ -116,9 +129,9 @@ export default component$(() => {
                   </button>
                 </div>
                 {field.error && (
-                  <div class="mt-1 text-red-500 text-xs">
-                    {field.error}
-                  </div>
+                  <div class="absolute left-0 mt-1 text-xs md:text-base text-red-500">  
+                    {field.error}  
+                  </div>  
                 )}
               </div>
             )

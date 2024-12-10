@@ -1,15 +1,14 @@
 import { component$, type QwikIntrinsicElements } from '@builder.io/qwik';  
 
-export const Direction = component$((props: QwikIntrinsicElements['svg'] & { color?: string }) => {
-  // https://www.svgrepo.com/svg/393625/compass
+export const Podium = component$((props: QwikIntrinsicElements['svg'] & { color?: string }) => {
+  // https://www.svgrepo.com/svg/462317/podium
 
   const { color = 'black' } = props;
 
   return (
-    <svg {...props} fill={color} height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve">
-      <path d="M256,0C114.6,0,0,114.6,0,256s114.6,256,256,256s256-114.6,256-256S397.4,0,256,0z M256,472.6
-        c-119.6,0-216.6-97-216.6-216.6S136.4,39.4,256,39.4s216.6,97,216.6,216.6S375.6,472.6,256,472.6z M118.2,393.8l187.1-88.6
-        l88.6-187.1l-187.1,88.6L118.2,393.8z M285.5,285.5l-118.2,59.1l59.1-118.2L285.5,285.5z"/>
+    <svg {...props} fill={color} width="800px" height="800px" viewBox="0 0 24 24" id="podium" data-name="Line Color" xmlns="http://www.w3.org/2000/svg">
+      <polygon id="secondary" points="11.54 3.94 10.5 4.09 11.25 4.82 11.07 5.85 12 5.37 12.93 5.85 12.75 4.82 13.5 4.09 12.46 3.94 12 3 11.54 3.94" style={`fill: none; stroke: ${color}; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;`}></polygon>
+      <path id="primary" d="M9,21H3V16H9Zm6-11H9V21h6Zm6,4H15v7h6Z" style={`fill: none; stroke: ${color}; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;`}></path>
     </svg>
   )
 });

@@ -18,9 +18,9 @@ export const head: DocumentHead = {
 export default component$(() => {
 
   return (
-    <div class="m-12">
+    <div class="m-4 md:m-12">
       <StudentIDForm />
-      <div class="h-12"></div>
+      <div class="md:h-12"></div>
       <SelectionTabs />
     </div>
   );

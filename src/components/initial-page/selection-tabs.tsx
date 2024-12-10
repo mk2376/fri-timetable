@@ -1,4 +1,4 @@
-import { component$, useSignal, useComputed$, useTask$ } from '@builder.io/qwik';  
+import { $, component$, useSignal, useComputed$, useTask$, useOnWindow } from '@builder.io/qwik';  
 import { useNavigate, useLocation } from '@builder.io/qwik-city';  
 import * as Icons from '~/components/icons/qwik';  
 import styles from "./selection-tabs.module.css";  
@@ -19,21 +19,38 @@ type TabContent = {
   [key: string]: NestedList[];  
 };  
 
+function useIsMobile() {
+  const isMobile = useSignal(false);
+
+  // Function to check and update the isMobile signal  
+  const updateIsMobile = $(() => {  
+    isMobile.value = window.innerWidth < 768;
+    console.log('isMobile updated:', isMobile.value);  
+  });
+
+  useOnWindow('resize', updateIsMobile);
+  useOnWindow('DOMContentLoaded', updateIsMobile);
+
+  return isMobile
+}
+
 export default component$(() => {  
   const location = useLocation(); // Get the current URL and query parameters  
   const navigate = useNavigate(); // For updating the URL  
-  const activeTab = useSignal(location.url.searchParams.get('tab') || 'level'); // Default to 'level'  
+  const activeTab = useSignal(location.url.searchParams.get('tab') || 'degree'); // Default to 'level'  
   const listPath = useSignal(location.url.searchParams.get('listPath') || ''); // Track the current list path  
 
+  const isMobile = useIsMobile();
+
   const tabs: Tab[] = [  
-    { id: 'level', label: 'Level of study', icon: 'Direction' },  
+    { id: 'degree', label: 'Degree', icon: 'Podium' },  
     { id: 'teachers', label: 'Teachers', icon: 'Professors' },  
     { id: 'classrooms', label: 'Classrooms', icon: 'Classrooms' },  
     { id: 'subjects', label: 'Subjects', icon: 'Subjects' },  
   ];  
 
   const tabContent: TabContent = {  
-    level: [  
+    degree: [  
       { id: '1', label: 'prva stopnja: univerzitetni', children: [  
         { id: '1-1', label: 'Second Level 1-1' },  
         { id: '1-2', label: 'Second Level 1-2', children: [  
@@ -122,110 +139,159 @@ export default component$(() => {
     }  
   });  
 
+  console.log("isMobile.value", isMobile.value)
+
   return (  
-    <div class="p-6 max-w-3xl mx-auto">  
-      {/* Tabs */}  
-      <div class="relative flex items-center justify-between pb-0.5 border-b shadow-xl rounded-lg border-gray-300">  
-        {/* Light effect position container */}  
-        <div  
-          class="absolute bottom-0 left-0 pointer-events-none"  
-          style={{  
-            width: `${100 / tabs.length}%`,  
-            transform: `translateX(${activeIndex.value * 100}%)`,  
-            height: '40px',  
-            zIndex: 10,  
-            transition: 'transform 4000ms ease-in-out',  
-          }}  
-        >  
-          {/* Animated light effect */}  
-          <div class={styles["animate-light-warp"]}  
+    <div class="mx-auto">
+      {/* Main Container */} 
+      <div class="flex flex-col md:flex-row md:space-x-4">  
+        {/* Tabs */} 
+        <div class="rounded-lg border-gray-300
+          flex items-center justify-between md:justify-start md:flex-col
+          shadow-[0px_-15px_15px_-10px_rgba(0,0,0,0.3)] md:shadow-[15px_0px_10px_-10px_rgba(0,0,0,0.3)]
+          border-t md:border-t-0 md:border-r
+          fixed bottom-0 left-0 md:relative
+          m-2 w-[calc(100%-16px)] md:w-auto
+          h-fit"
+        >
+          {/* Light effect position container */}  
+          <div  
+            class="absolute bottom-0 left-0 pointer-events-none md:top-0 md:left-0"  
             style={{  
-              position: "absolute",  
-              inset: 0,  
-              background: "radial-gradient(ellipse at center bottom, rgba(59, 130, 246, 0.8), rgba(59, 130, 246, 0.4) 50%, rgba(59, 130, 246, 0) 100%)",  
-              filter: "blur(10px)",  
+              width: isMobile.value
+                ? `${100 / tabs.length}%`
+                : "100%",
+              height: isMobile.value
+                ? `100%`
+                : `${100 / tabs.length}%`,
+              zIndex: 10,  
+              transition: "transform 4000ms ease-in-out",  
+              transform: isMobile.value
+                ? `translateX(${activeIndex.value * 100}%)`  
+                : `translateY(${activeIndex.value * 100}%)`,  
+            }}  
+          >  
+            {/* Animated light effect */}  
+            <div  
+              class={styles["animate-light-warp"]}  
+              style={{  
+                position: "absolute",  
+                inset: 0,  
+                background:  
+                  "radial-gradient(ellipse at center bottom, rgba(59, 130, 246, 0.8), rgba(59, 130, 246, 0.4) 50%, rgba(59, 130, 246, 0) 100%)",  
+                filter: "blur(10px)",  
+              }}  
+            />  
+          </div>  
+
+          {/* Active tab indicator */}
+          <div  
+            class="absolute bottom-0 left-0 h-10 bg-blue-500 rounded-lg transition-all duration-300 ease-in-out z-0 md:top-0 md:left-0 md:h-auto md:w-1"  
+            style={{  
+              width: isMobile.value
+                ? `${100 / tabs.length}%`
+                : "100%",  
+              height: isMobile.value
+                ? "100%"
+                : `${100 / tabs.length}%`,  
+              transform: isMobile.value
+                ? `translateX(${activeIndex.value * 100}%)`
+                : `translateY(${activeIndex.value * 100}%)`,  
             }}  
           />  
+
+          {/* Tab Buttons */}  
+          {tabs.map((tab, index) => {  
+            const Icon = Icons[tab.icon];  
+            const isActive = activeTab.value === tab.id;  
+
+            return (  
+              <button class={`relative z-10 flex flex-col md:flex-row
+                items-center justify-center w-full py-2 px-4 text-xs md:text-base font-medium
+                ${isActive ? "text-white font-bold" : "text-gray-500"}
+                md:justify-start md:py-4`}
+                key={tab.id}  
+                onClick$={() => {  
+                  activeTab.value = tab.id;  
+                  activeIndex.value = index; // Update the active index  
+                  listPath.value = ""; // Reset to the root list  
+                  navigate(`?tab=${tab.id}&listPath=`); // Update the URL  
+                }}  
+              >  
+                <Icon class="w-10 h-10 md:w-7 md:h-7
+                  m-0.5 md:mr-2"  
+                  color={isActive ? "white" : "black"}  
+                />  
+                <span>{tab.label}</span>  
+              </button>  
+            );  
+          })}  
         </div>  
 
-        {/* Active tab indicator */}
+        {/* Nested List */}  
         <div  
-          class="absolute bottom-0 left-0 h-10 bg-blue-500 rounded-lg transition-all duration-300 ease-in-out z-0"  
-          style={{  
-            width: `${100 / tabs.length}%`,  
-            transform: `translateX(${activeIndex.value * 100}%)`,  
-          }}  
-        />  
-
-        {/* Tab Buttons */}  
-        {tabs.map((tab) => {  
-          const Icon = Icons[tab.icon];  
-          const isActive = activeTab.value === tab.id;  
-
-          return (  
-            <button  
-              key={tab.id}  
+          class="relative
+            w-full md:min-w-64 md:w-auto"  
+          style="transform: scaleX(-1)"  
+        >  
+          {/* Back Button */}  
+          {listPath.value && (  
+            <button
+              class="absolute p-2 text-blue-500 hover:text-blue-600 z-20 right-0 top-1"
               onClick$={() => {  
-                activeTab.value = tab.id;  
-                listPath.value = ''; // Reset to the root list  
-                navigate(`?tab=${tab.id}&listPath=`); // Update the URL  
+                const newPath = listPath.value  
+                  .split("/")  
+                  .slice(0, -1)  
+                  .join("/"); // Go up one level
+                listPath.value = newPath;  
+                navigate(`?tab=${activeTab.value}&listPath=${newPath}`); // Update the URL  
               }}  
-              class={`relative z-10 flex items-center justify-center w-full py-2 px-4 text-sm font-medium ${  
-                isActive ? 'text-white font-bold' : 'text-gray-500'  
-              }`}  
             >  
-              <Icon class="w-5 h-5 mr-2" color={isActive ? 'white' : 'black'} />  
-              <span>{tab.label}</span>  
+              <Icons.ArrowLeft class="w-5 h-5 hover:fill-gray-500" />  
             </button>  
-          );  
-        })}  
-      </div>  
+          )}  
 
+          {/* Add a wrapper div for the fading effect */}  
+          <div  
+            class={`relative h-[calc(100vh-180px-80px)] md:max-h-[40rem] overflow-y-auto z-10 ${styles["mask-fade"]}`}  
+          >  
+            <ul class="p-6"
+              style="transform: scaleX(-1)"  
+            >  
+              {currentList.value.map((item) => (  
+                <li key={item.id} class="m-2">  
+                  <button  
+                    class="text-blue-500 flex items-center justify-between text-left rounded-lg bg-gray-200 hover:bg-blue-100 shadow-lg p-4"  
+                    onClick$={() => {  
+                      const newPath = listPath.value
+                        ? `${listPath.value}/${item.id}`
+                        : item.id;  
 
-      {/* Nested List */}    
-      <div class="mt-4 bg-gray-100 rounded-lg shadow-lg relative">    
-        {/* Back Button */}  
-        {listPath.value && (  
-          <button  
-            class="absolute p-2 text-blue-500 hover:text-blue-600 z-20"   
-            onClick$={() => {    
-              const newPath = listPath.value.split('/').slice(0, -1).join('/'); // Go up one level    
-              listPath.value = newPath;    
-              navigate(`?tab=${activeTab.value}&listPath=${newPath}`); // Update the URL    
-            }}  
-          >    
-            <Icons.ArrowLeft class="w-5 h-5 hover:fill-gray-500" />    
-          </button>    
-        )}    
-
-        {/* Add a wrapper div for the fading effect */}  
-        <div class={`relative max-h-[30rem] overflow-y-auto z-10 ${styles["mask-fade"]}`}>  
-          <ul class="p-6">    
-            {currentList.value.map((item) => (    
-              <li key={item.id} class="m-2">    
-                <button  
-                  class="text-blue-500 flex items-center justify-between text-left rounded-lg bg-gray-200 hover:bg-blue-100 shadow-md p-4"      
-                  onClick$={() => {  
-                    const newPath = listPath.value ? `${listPath.value}/${item.id}` : item.id;    
-
-                    if (item.children) { // Nested list  
-                      listPath.value = newPath;      
-                      navigate(`?tab=${activeTab.value}&listPath=${newPath}`); // Update the URL      
-                    } else { // Leaf  
-                      navigate(`/timetable?${activeTab.value}=${newPath}`); // Redirect to timetable  
-                    }  
-                  }}  
-                >    
-                  <span>{item.label}</span>    
-                  {item.children && (      
-                    <Icons.Tree class="ml-4 w-7 h-7 -my-10 flex-shrink-0 fill-blue-500" /> // Indicator for nested lists      
-                  )}  
-                </button>       
-              </li>    
-            ))}    
-          </ul>    
+                      if (item.children) {  
+                        // Nested list  
+                        listPath.value = newPath;  
+                        navigate(  
+                          `?tab=${activeTab.value}&listPath=${newPath}`  
+                        ); // Update the URL  
+                      } else {  
+                        // Leaf  
+                        navigate(  
+                          `/timetable?${activeTab.value}=${newPath}`  
+                        ); // Redirect to timetable  
+                      }  
+                    }}  
+                  >  
+                    <span>{item.label}</span>  
+                    {item.children && (  
+                      <Icons.Tree class="ml-4 w-7 h-7 -my-10 flex-shrink-0 fill-blue-500" />  
+                    )}  
+                  </button>  
+                </li>  
+              ))}  
+            </ul>  
+          </div>  
         </div>  
-      </div>     
+      </div>    
     </div>  
   );  
 });  
