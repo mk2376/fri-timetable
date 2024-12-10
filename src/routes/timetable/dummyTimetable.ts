@@ -1,5 +1,5 @@
 
-import {Timetable, Activity, Subject} from '../../models/Timetable'
+import {Timetable, Activity} from '../../models/Timetable'
 
 export const data = {
     subjects: [
@@ -180,7 +180,23 @@ export const data = {
                     day: "TOR",
                     hourStart: 14,
                     hourEnd: 16
-                }
+                },
+                {
+                    activityType: "AV",
+                    location: "P07",
+                    teacher: ["Prosto prosto"],
+                    day: "TOR",
+                    hourStart: 15,
+                    hourEnd: 17
+                },/*
+                {
+                    activityType: "AV",
+                    location: "P08",
+                    teacher: ["Prosto prosto"],
+                    day: "TOR",
+                    hourStart: 15,
+                    hourEnd: 17
+                }*/
             ]
         }
     ]
