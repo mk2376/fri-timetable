@@ -58,9 +58,9 @@ export default component$(() => {
                 <div class="relative">
                   <input
                     {...props}
-                    class="peer h-full w-full rounded-[7px] border border-blue-gray-200 bg-transparent px-3 pt-[13px] pb-2.5 pr-20
-                      text-sm md:text-base text-blue-gray-700 placeholder-transparent
-                      focus:border-2 focus:border-pink-500 focus:outline-none"
+                    class="peer h-full w-full rounded-[7px] border border-text bg-transparent px-3 pt-[13px] pb-2.5 pr-20
+                      text-sm md:text-base text-text placeholder-transparent
+                      focus:border-2 focus:border-primary focus:outline-none"
                     type="studentID"
                     placeholder="Student ID" // Required for peer-placeholder to work
                     required
@@ -110,26 +110,26 @@ export default component$(() => {
                     }}
                   />
                   <label
-                    class="pointer-events-none absolute text-blue-gray-500 transition-all
-                      left-3 md:left-6
+                    class="pointer-events-none absolute text-text transition-all
+                      left-5
                       text-sm md:text-base
-                      peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:-translate-x-1
-                      peer-placeholder-shown:text-blue-gray-400
-                      peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-pink-500
-                      peer-valid:top-2 peer-valid:text-[10px] peer-valid:-translate-y-1/2 peer-valid:-translate-x-1"
+                      peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:-translate-x-3
+                      peer-placeholder-shown:text-text
+                      peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-primary
+                      peer-valid:top-2 peer-valid:text-[10px] peer-valid:-translate-y-1/2 peer-valid:-translate-x-3"
                   >
                     Student ID
                   </label>
                   <button
                     class={`absolute right-1.5 top-1/2 -translate-y-1/2 z-10 rounded py-2 px-4 text-xs md:text-sm font-bold uppercase text-white shadow-md transition-all hover:shadow-lg focus:opacity-85 active:opacity-85
-                        ${isValid ? styles["animated-border"] : 'bg-pink-500'
+                        ${isValid ? styles["animated-border"] : 'bg-primary'
                       }`} type="submit"
                   >
                     Show timetable
                   </button>
                 </div>
                 {field.error && (
-                  <div class="absolute left-0 mt-1 text-xs md:text-base text-red-500">  
+                  <div class="absolute left-0 mt-1 text-xs md:text-base text-primary">  
                     {field.error}  
                   </div>  
                 )}
