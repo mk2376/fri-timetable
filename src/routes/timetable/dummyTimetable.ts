@@ -1,5 +1,5 @@
 
-import {Timetable, Activity} from '../../models/Timetable'
+import type { Timetable, Activity } from '../../models/Timetable'
 
 export const data = {
     subjects: [
@@ -8,7 +8,7 @@ export const data = {
             shortName: "KČR",
             fullName: "Komunikacija Človek Računalnik"
           },
-          color: "#cdc9e9",
+          color: "rgba(205, 201, 233, 0.7)",
           activities: [
             {
               activityType: "P",
@@ -65,7 +65,7 @@ export const data = {
               shortName: "P",
               fullName: "Funkcijsko Programiranje"
             },
-            color: "#a5e9dd",
+            color: "rgba(165, 233, 221, 0.7)",
             activities: [
               /*{
                 activityType: "P",
@@ -122,7 +122,7 @@ export const data = {
               shortName: "IVZ",
               fullName: "Informacijska Varnost in Zasebnost"
             },
-            color: "#ffffc8",
+            color: "rgba(255, 255, 200, 0.7)",
             activities: [
               {
                 activityType: "P",
@@ -163,7 +163,7 @@ export const data = {
                 shortName: "TEST",
                 fullName: "Testiranje"
               },
-              color: "#ffff38",
+              color: "rgba(255, 255, 56, 0.7)",
               activities: [
                 {
                   activityType: "AV",

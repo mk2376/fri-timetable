@@ -1,8 +1,9 @@
-import { component$, useVisibleTask$, useSignal } from '@builder.io/qwik';
-import {Timetable, Activity} from '../../models/Timetable'
-import { dummyTimetable } from './dummyTimetable'; // Zacasni podatki 
+import { component$, useSignal, useContext } from '@builder.io/qwik';
+import type { Timetable, Activity } from '../../models/Timetable'
+import { dummyTimetable } from './dummyTimetable'; // Temporary data
 import dayjs from "../../lib/dayjsConfig"
-import { Dayjs } from 'dayjs';
+import { type Dayjs } from 'dayjs';
+import { Platform } from '~/lib/state/platform';
 
 type timetableProps = {
   daysData: activityGroup[][],
@@ -57,7 +58,7 @@ const TimetableColumn = component$((props: timetableColumnProps) => {
                             >
                               <div
                                 key={activity.dateFrom.toString()}
-                                class="flex flex-col w-full h-full bg-blue-100 opacity-70 rounded-lg p-1 z-10 m-1"
+                                class="flex flex-col w-full h-full dark:text-black /* white does not provide enough contrast */ rounded-lg p-1 z-10 m-1"
                                 style={{
                                   backgroundColor: `${activity.color}`,
                                   height: `${dayjs(activity.dateTo).diff(dayjs(activity.dateFrom), "hour") * 3.7}rem`,
@@ -69,7 +70,7 @@ const TimetableColumn = component$((props: timetableColumnProps) => {
                                 <div class="text-sm italic mb-2">
                                   {activity.teacher.join(", ")}
                                 </div>
-                                <div class="text-m font-semibold">
+                                <div class="text-sm font-semibold">
                                   {activity.location}
                                 </div>
                                 
@@ -106,8 +107,8 @@ const DesktopTimetable = component$((props: timetableProps) => {
   const hours = Array.from({ length: 15 }, (_, i) => i + 7);
 
   return (
-    <div class="flex flex-row bg-white shadow-md rounded-lg overflow-auto">
-      <div class="flex flex-col bg-white sticky left-0 z-50">
+    <div class="flex flex-row shadow-md rounded-lg overflow-auto">
+      <div class="flex flex-col sticky left-0 z-50">
         <div class="py-4 border border-gray-400">
           <br />
         </div>
@@ -178,8 +179,8 @@ const MobileTimetable = component$((props: timetableProps) => {
                 key={index}
                 class={`flex flex-col justify-center items-center w-full py-4 cursor-pointer transition-all relative ${
                   selectedDaySignal.value === days[index]
-                    ? 'font-bold text-black w-1/3'
-                    : 'text-gray-500 hover:text-gray-700 w-1/4'
+                    ? 'font-bold w-1/3'
+                    : 'text-gray-500 w-1/4'
                 }`}
                 onClick$={() => (selectedDaySignal.value = days[index])}
               >
@@ -187,7 +188,7 @@ const MobileTimetable = component$((props: timetableProps) => {
 
                 <div
                   class={`absolute bottom-0 left-0 h-1 w-full transition-all duration-300 ${
-                    selectedDaySignal.value === days[index] ? 'bg-blue-500' : 'bg-transparent'
+                    selectedDaySignal.value === days[index] ? 'bg-primary' : 'bg-transparent'
                   }`}
                 />
               </div>
@@ -323,32 +324,14 @@ export default component$(() => {
     return groupingPerDay;
   }
 
-  const isMobile = useSignal(false);
-  const isClientLoaded = useSignal(false);
-
   const dayScheduleGroup = getScheduleGroupingForEachDay(startOfWeek);
-
-  useVisibleTask$(() => {
-    isClientLoaded.value = true;
-    const updateScreenWidth = () => {
-      isMobile.value = window.innerWidth <= 768;
-    };
-    updateScreenWidth();
-    window.addEventListener('resize', updateScreenWidth);
-    return () => window.removeEventListener('resize', updateScreenWidth);
-  });
-
-  
-  if(!isClientLoaded.value) {
-    return (
-      <></>
-    );
-  }
   const days = ["Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek"]
+
+  const platform = useContext(Platform)
 
   return (
     <>
-      {isMobile.value ? (
+      {platform.isMobile.value ? (
         <MobileTimetable daysData={dayScheduleGroup} possibleDays={days}/>
       ) : (
         <DesktopTimetable daysData={dayScheduleGroup} possibleDays={days}/>

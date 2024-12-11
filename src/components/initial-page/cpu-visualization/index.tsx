@@ -15,6 +15,7 @@ function useCPUVisualization({
 
   const platform = useContext(Platform)    
 
+  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ cleanup }) => {            
     if (!canvasRef.value || !containerRef.value) return;            
 
