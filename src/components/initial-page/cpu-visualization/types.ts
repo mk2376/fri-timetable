@@ -44,7 +44,7 @@ export class Branch {
     this.baseLength = length;  
     this.currentLength = length;  
     this.targetLength = length;  
-    this.maxExtension = length * 1.5;  
+    this.maxExtension = length * 1.3;  
     this.thickness = thickness;  
     this.generation = generation;  
     this.children = [];  
@@ -61,7 +61,7 @@ export class Branch {
       const numChildren = Math.floor(Math.random() * 3) + 1;  
       for (let i = 0; i < numChildren; i++) {  
         const newAngle = this.angle + (Math.random() * 1.2 - 0.6);  
-        const newLength = this.baseLength * (0.5 + Math.random() * 0.3);  
+        const newLength = this.baseLength * (0.7 + Math.random() * 0.2);  
         const newThickness = this.thickness * 0.7;  
 
         this.children.push(  
@@ -102,7 +102,7 @@ export class Branch {
     const angleDiff = Math.abs(((mouseAngle - this.angle + Math.PI) % (Math.PI * 2)) - Math.PI);  
     const angleAlignment = Math.max(0, 1 - angleDiff / Math.PI);  
 
-    const extensionFactor = 0.5 * angleAlignment;  
+    const extensionFactor = 0.2 * angleAlignment;  
     this.targetLength = Math.min(  
       this.baseLength * (1 + extensionFactor),  
       this.maxExtension  

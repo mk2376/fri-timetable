@@ -8,10 +8,10 @@ export default component$(() => {
 
   return (
     <nav>
-      <header class="h-24 flex justify-between items-center bg-accent text-white py-2 px-6">
+      <header class="h-24 flex justify-between items-center pr-6">
         <Link href="/" class="h-full max-w-fit">
           { /* eslint-disable-next-line qwik/jsx-img */}
-          <img src={"/media/" + (mode.isDarkTheme.value ? "FRI_logo_eng_dark.png" : "FRI_logo_eng.png")} class="h-full max-w-fit" />
+          <img src={"/media/" + (mode.isDarkTheme.value ? "FRI_logo_eng_dark.png" : "FRI_logo_eng.png")} class="py-4 px-6 h-full max-w-fit backdrop-blur-xl" />
         </Link>
         <ThemeSwitcher />
       </header>

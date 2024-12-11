@@ -19,13 +19,13 @@ export const head: DocumentHead = {
 export default component$(() => {
 
   return (
-    <div class="m-4 md:m-12">
+    <div class="m-4 md:mx-12">
       <StudentIDForm />
       <div class="md:h-12"></div>
-      <SelectionTabs />
+      <SelectionTabs/>
       <CPUVisualization   
         particleSpeed={0.001}  
-        rootCount={15}  
+        rootCount={20}  
         primaryColor="#de3626" // Does not accept var, since this is not CSS  
         />
     </div>

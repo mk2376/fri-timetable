@@ -58,7 +58,7 @@ export default component$(() => {
                 <div class="relative">
                   <input
                     {...props}
-                    class="peer h-full w-full rounded-[7px] border border-text bg-transparent px-3 pt-[13px] pb-2.5 pr-20
+                    class="peer h-full w-full rounded-[7px] border border-text bg-transparent px-3 pt-[13px] pb-2.5 pr-20 backdrop-blur-[3px] dark:backdrop-blur-[2px]
                       text-sm md:text-base placeholder-transparent
                       focus:border-2 focus:border-primary focus:outline-none"
                     type="studentID"
@@ -128,7 +128,7 @@ export default component$(() => {
                   </button>
                 </div>
                 {field.error && (
-                  <div class="absolute left-0 mt-1 text-xs md:text-base text-primary">  
+                  <div class="absolute left-0 pt-1 text-xs md:text-base text-primary backdrop-blur-[3px] dark:backdrop-blur-[2px]">  
                     {field.error}  
                   </div>  
                 )}

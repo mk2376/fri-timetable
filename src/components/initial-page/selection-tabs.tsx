@@ -126,11 +126,11 @@ export default component$(() => {
   });  
 
   return (  
-    <div class="mx-auto">
+    <div class="mx-auto md:pl-24">
       {/* Main Container */} 
       <div class="flex flex-col md:flex-row md:space-x-4">  
         {/* Tabs */} 
-        <div class={`rounded-lg border-gray-300
+        <div class={`rounded-lg border-gray-300 backdrop-blur
           flex items-center justify-between md:justify-start md:flex-col
           shadow-top md:shadow-right
           border-t md:border-t-0 md:border-r
@@ -191,9 +191,9 @@ export default component$(() => {
 
             return (
               <button class={`z-10 relative flex flex-col md:flex-row
-                items-center justify-center w-full py-2 px-4 font-variation-settings-prevent-shift
+                items-center justify-center w-full py-2 px-4 font-medium
                 text-xs md:text-base
-                ${isActive ? "text-white font-bold" : "font-medium"}
+                ${isActive ? "text-white" : ""}
                 md:justify-start md:py-4`}
                 key={tab.id}  
                 onClick$={() => {

@@ -36,7 +36,7 @@
     --background-color: #000000;
     --text-color: #ffffff;
 
-    --accent-color: hsl(0, 0%, 18%); /* fixed */
+    --accent-color: rgb(55 65 81);  /* bg-gray-700 OLD: hsl(0, 0%, 18%); /* fixed */
     --accent-hover-color: hsl(0, 0%, 25%);
     --tw-shadow-color: var(--text-color);
   }
@@ -120,5 +120,4 @@ button {
   padding: 15px 20px;
   color: var(--text-color);
   text-align: center;
-  color: var(--text-color);
 }

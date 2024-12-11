@@ -12,7 +12,7 @@ export default component$<ThemeToggleProps>(({ class: className }) => {
 
   return (  
     <div class={["relative", className]}>  
-      <button class="w-20 h-10 p-0 rounded-full bg-white flex items-center transition duration-600 focus:outline-none shadow-lg"  
+      <button class="w-20 h-10 p-0 rounded-full bg-white flex items-center transition duration-600 focus:outline-none shadow-md"  
         onClick$={isDarkMode.switchMode}
         value={String(isDarkMode.isDarkTheme.value)}
         aria-label="Toggle theme"
@@ -21,7 +21,7 @@ export default component$<ThemeToggleProps>(({ class: className }) => {
           class={[  
             "absolute w-10 h-10 rounded-full transition duration-1000 transform flex items-center justify-center left-0 top-0 bottom-0 right-0 shadow-lg",    
             isDarkMode.isDarkTheme.value
-              ? "bg-gray-700 translate-x-10"   
+              ? "bg-accent translate-x-10"   
               : "bg-yellow-500 translate-x-0"    
           ]}    
         >    
