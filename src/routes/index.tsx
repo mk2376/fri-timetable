@@ -2,6 +2,7 @@ import { component$ } from '@builder.io/qwik';
 import { type  DocumentHead } from '@builder.io/qwik-city';
 import StudentIDForm from '~/components/initial-page/student-ID-form';
 import SelectionTabs from '~/components/initial-page/selection-tabs'
+import { CPUVisualization } from '~/components/initial-page/cpu-visualization/index';
 
 export { useFormLoader }  from '~/components/initial-page/student-ID-form';
 
@@ -18,10 +19,15 @@ export const head: DocumentHead = {
 export default component$(() => {
 
   return (
-    <div class="m-4 md:m-12">
+    <div class="m-4 md:mx-12">
       <StudentIDForm />
       <div class="md:h-12"></div>
-      <SelectionTabs />
+      <SelectionTabs/>
+      <CPUVisualization   
+        particleSpeed={0.001}  
+        rootCount={20}  
+        primaryColor="#de3626" // Does not accept var, since this is not CSS  
+        />
     </div>
   );
 });

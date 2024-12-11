@@ -1,7 +1,8 @@
-import { $, component$, useSignal, useComputed$, useTask$, useOnWindow } from '@builder.io/qwik';  
+import { component$, useSignal, useComputed$, useTask$, useContext } from '@builder.io/qwik';  
 import { useNavigate, useLocation } from '@builder.io/qwik-city';  
 import * as Icons from '~/components/icons/qwik';  
 import styles from "./selection-tabs.module.css";  
+import { Platform } from '~/lib/state/platform';
 
 type Tab = {  
   id: string;  
@@ -19,28 +20,13 @@ type TabContent = {
   [key: string]: NestedList[];  
 };  
 
-function useIsMobile() {
-  const isMobile = useSignal(false);
-
-  // Function to check and update the isMobile signal  
-  const updateIsMobile = $(() => {  
-    isMobile.value = window.innerWidth < 768;
-    console.log('isMobile updated:', isMobile.value);  
-  });
-
-  useOnWindow('resize', updateIsMobile);
-  useOnWindow('DOMContentLoaded', updateIsMobile);
-
-  return isMobile
-}
-
 export default component$(() => {  
   const location = useLocation(); // Get the current URL and query parameters  
   const navigate = useNavigate(); // For updating the URL  
   const activeTab = useSignal(location.url.searchParams.get('tab') || 'degree'); // Default to 'level'  
   const listPath = useSignal(location.url.searchParams.get('listPath') || ''); // Track the current list path  
 
-  const isMobile = useIsMobile();
+  const platform = useContext(Platform);
 
   const tabs: Tab[] = [  
     { id: 'degree', label: 'Degree', icon: 'Podium' },  
@@ -140,11 +126,11 @@ export default component$(() => {
   });  
 
   return (  
-    <div class="mx-auto">
+    <div class="mx-auto md:pl-24">
       {/* Main Container */} 
       <div class="flex flex-col md:flex-row md:space-x-4">  
         {/* Tabs */} 
-        <div class={`rounded-lg border-gray-300
+        <div class={`rounded-lg border-gray-300 backdrop-blur
           flex items-center justify-between md:justify-start md:flex-col
           shadow-top md:shadow-right
           border-t md:border-t-0 md:border-r
@@ -156,15 +142,15 @@ export default component$(() => {
           <div  
             class="absolute bottom-0 left-0 pointer-events-none md:top-0 md:left-0"  
             style={{  
-              width: isMobile.value
+              width: platform.isMobile.value
                 ? `${100 / tabs.length}%`
                 : "100%",
-              height: isMobile.value
+              height: platform.isMobile.value
                 ? `100%`
                 : `${100 / tabs.length}%`,
               zIndex: 10,  
-              transition: "transform 4000ms ease-in-out",  
-              transform: isMobile.value
+              transition: "transform 500ms ease-in-out",  
+              transform: platform.isMobile.value
                 ? `translateX(${activeIndex.value * 100}%)`  
                 : `translateY(${activeIndex.value * 100}%)`,  
             }}  
@@ -186,32 +172,32 @@ export default component$(() => {
           <div  
             class="absolute bottom-0 left-0 h-10 bg-primary rounded-lg transition-all duration-300 ease-in-out md:top-0 md:left-0 md:h-auto md:w-1"  
             style={{  
-              width: isMobile.value
+              width: platform.isMobile.value
                 ? `${100 / tabs.length}%`
                 : "100%",  
-              height: isMobile.value
+              height: platform.isMobile.value
                 ? "100%"
                 : `${100 / tabs.length}%`,  
-              transform: isMobile.value
+              transform: platform.isMobile.value
                 ? `translateX(${activeIndex.value * 100}%)`
                 : `translateY(${activeIndex.value * 100}%)`,  
             }}  
           />  
 
           {/* Tab Buttons */}  
-          {tabs.map((tab, index) => {  
+          {tabs.map((tab) => {  
             const Icon = Icons[tab.icon];  
             const isActive = activeTab.value === tab.id;  
 
-            return (  
+            return (
               <button class={`z-10 relative flex flex-col md:flex-row
-                items-center justify-center w-full py-2 px-4 text-xs md:text-base font-medium
-                ${isActive ? "white font-bold" : "text-text"}
+                items-center justify-center w-full py-2 px-4 font-medium
+                text-xs md:text-base
+                ${isActive ? "text-white" : ""}
                 md:justify-start md:py-4`}
                 key={tab.id}  
-                onClick$={() => {  
+                onClick$={() => {
                   activeTab.value = tab.id;  
-                  activeIndex.value = index; // Update the active index  
                   listPath.value = ""; // Reset to the root list  
                   navigate(`?tab=${tab.id}&listPath=`); // Update the URL  
                 }}  
@@ -229,7 +215,7 @@ export default component$(() => {
         {/* Nested List */}  
         <div  
           class="relative
-            w-full md:min-w-64 md:w-auto"  
+            w-full md:min-w-96 md:w-auto"  
           style="transform: scaleX(-1)"  
         >  
           {/* Back Button */}  
@@ -251,7 +237,7 @@ export default component$(() => {
 
           {/* Add a wrapper div for the fading effect */}  
           <div  
-            class={`relative h-[calc(100vh-220px-80px)] md:max-h-[40rem] overflow-y-auto ${styles["mask-fade"]}`}  
+            class={`relative h-[calc(100vh-220px-80px)] md:max-h-[50rem] overflow-y-auto ${styles["mask-fade"]}`}  
           >  
             <ul class="p-6"
               style="transform: scaleX(-1)"  
@@ -259,7 +245,7 @@ export default component$(() => {
               {currentList.value.map((item) => (  
                 <li key={item.id} class="m-2">  
                   <button  
-                    class="text-text flex items-center justify-between text-left rounded-lg bg-accent hover:bg-accent-hover shadow-md dark:shadow-white p-4"  
+                    class="flex items-center justify-between text-left rounded-lg bg-accent hover:bg-accent-hover shadow-md dark:shadow-white p-4"  
                     onClick$={() => {  
                       const newPath = listPath.value
                         ? `${listPath.value}/${item.id}`
