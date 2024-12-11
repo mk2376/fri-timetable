@@ -1,4 +1,4 @@
-import { component$, Slot, useContextProvider, useStyles$ } from "@builder.io/qwik";
+import { component$, Slot, useStyles$ } from "@builder.io/qwik";
 import { routeLoader$ } from "@builder.io/qwik-city";
 import type { RequestHandler } from "@builder.io/qwik-city";
 
@@ -6,7 +6,8 @@ import Header from "~/components/header/header";
 import Footer from "~/components/footer/footer";
 
 import styles from "./styles.css?inline";
-import { Mode, useIsDarkMode } from "~/components/header/theme-switcher";
+import { InitPlatformContext } from "~/lib/state/platform";
+import { InitModeContext } from "~/lib/state/mode";
 
 export const onGet: RequestHandler = async ({ cacheControl }) => {
   // Control caching for this request for best performance and to reduce hosting costs:
@@ -29,8 +30,8 @@ export default component$(() => {
   useStyles$(styles);
 
   // This has to be initialized in parent
-  const { isDarkMode, switchMode } = useIsDarkMode()
-  useContextProvider(Mode, { isDarkTheme: isDarkMode, switchMode: switchMode });
+  InitPlatformContext()
+  InitModeContext()
 
   return (
     <div class="flex flex-col min-h-screen">

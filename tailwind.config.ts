@@ -22,7 +22,10 @@ export default {
       boxShadow: {
         top: "0px -7px 15px -10px var(--tw-shadow-color)",
         right: "12px 0px 10px -10px var(--tw-shadow-color)",
-      }
+      },
+      fontVariationSettings: {  
+        'prevent-shift': '"GRAD" 0',  
+      },
     },
   },
 	plugins: [

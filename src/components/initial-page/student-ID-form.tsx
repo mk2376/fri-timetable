@@ -59,7 +59,7 @@ export default component$(() => {
                   <input
                     {...props}
                     class="peer h-full w-full rounded-[7px] border border-text bg-transparent px-3 pt-[13px] pb-2.5 pr-20
-                      text-sm md:text-base text-text placeholder-transparent
+                      text-sm md:text-base placeholder-transparent
                       focus:border-2 focus:border-primary focus:outline-none"
                     type="studentID"
                     placeholder="Student ID" // Required for peer-placeholder to work
@@ -110,11 +110,10 @@ export default component$(() => {
                     }}
                   />
                   <label
-                    class="pointer-events-none absolute text-text transition-all
+                    class="pointer-events-none absolute transition-all
                       left-5
                       text-sm md:text-base
                       peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:-translate-x-3
-                      peer-placeholder-shown:text-text
                       peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-primary
                       peer-valid:top-2 peer-valid:text-[10px] peer-valid:-translate-y-1/2 peer-valid:-translate-x-3"
                   >

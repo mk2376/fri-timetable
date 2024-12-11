@@ -1,36 +1,13 @@
-import { $, component$, useVisibleTask$, createContextId, useContext, type QRL, type Signal } from '@builder.io/qwik';
-import { useLocalStorage } from 'qwik-localstorage';
+import { component$, useContext} from '@builder.io/qwik';
 import { Sun, Moon } from '../icons/theme-switcher';  
-  
-export function useIsDarkMode() {
-  const { data, set } = useLocalStorage<boolean>("isDarkMode", true);
-
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(({ track }) => {
-    track(() => data.value);
-    document.body.classList.replace(data.value ? 'light': 'dark', data.value ? 'dark': 'light')
-    console.log("useIsDarkMode", document.documentElement.classList)
-  })
-
-  const switchMode = $(() => {
-    set(!data.value)
-  });
-
-  const setMode = $((mode: boolean) => {
-    set(mode)
-  });
-
-  return { isDarkMode: data, switchMode, setMode }
-}
-
-export const Mode = createContextId<{ isDarkTheme: Signal<boolean | null>, switchMode: QRL<() => void> }>('isDarkMode');
+import { Mode } from '~/lib/state/mode';
 
 interface ThemeToggleProps {    
   class?: string;  
 }
 
+// Inspiration: https://www.creative-tim.com/twcomponents/component/switch-to-darkmode
 export default component$<ThemeToggleProps>(({ class: className }) => {     
-
   const isDarkMode = useContext(Mode);
 
   return (  

@@ -1,14 +1,14 @@
 import { component$, useContext } from "@builder.io/qwik";    
-import { Mode } from "../header/theme-switcher";  
+import { Mode } from "~/lib/state/mode";
 
 export default component$(() => {  
   const mode = useContext(Mode);  
 
   return (    
-    <footer class="fixed bottom-0 w-full text-text shadow-lg mx-auto px-4 py-6 invisible md:visible">    
+    <footer class="fixed bottom-0 w-full shadow-lg mx-auto px-4 py-6 invisible md:visible">    
       <div class="text-center text-sm">  
         <p class="flex justify-center items-center gap-1"> {/* Added items-center and gap-1 */}  
-          Made with <span class="text-primary">♥</span> for FRI © {new Date().getFullYear()}  
+          Made with <span class="text-primary">♥</span> for <a href="https://fri.uni-lj.si/en" target="_blank">FRI</a> © {new Date().getFullYear()}
           <span class="mx-2">|</span>    
           <a href="https://github.com/mk2376/fri-timetable"   
              target="_blank"   
