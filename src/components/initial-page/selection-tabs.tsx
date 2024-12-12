@@ -236,12 +236,8 @@ export default component$(() => {
           )}  
 
           {/* Add a wrapper div for the fading effect */}  
-          <div  
-            class={`relative h-[calc(100vh-220px-80px)] md:max-h-[50rem] overflow-y-auto ${styles["mask-fade"]}`}  
-          >  
-            <ul class="p-6"
-              style="transform: scaleX(-1)"  
-            >  
+          <div class={`relative h-[calc(100vh-220px-40px-56px)] md:max-h-[50rem] overflow-y-auto ${styles["mask-fade"]}`}>  
+            <ul class="pl-6 my-14" style="transform: scaleX(-1)">  
               {currentList.value.map((item) => (  
                 <li key={item.id} class="m-2">  
                   <button  

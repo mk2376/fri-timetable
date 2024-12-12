@@ -13,7 +13,9 @@ function useCPUVisualization({
   const mousePos = useStore({ x: 0, y: 0 });        
   const cpuCenter = useStore({ x: 0, y: 0 });        
 
-  const platform = useContext(Platform)    
+  const platform = useContext(Platform) 
+  
+  const resizeTimeout = useSignal<number | null>(null);
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ cleanup }) => {            
@@ -37,8 +39,8 @@ function useCPUVisualization({
 
     // CPU glow effect state    
     let cpuGlowIntensity = 0;    
-    const MAX_PARTICLE_GLOW = 15;    
-    const MAX_MOUSE_GLOW = 25;    
+    const MAX_PARTICLE_GLOW = 30;    
+    const MAX_MOUSE_GLOW = 70;    
     const GLOW_DECAY_RATE = 0.2;    
     const MOUSE_GLOW_DISTANCE = 100;  
 
@@ -115,24 +117,43 @@ function useCPUVisualization({
       cachedEndBranches = getAllBranches().filter(branch => !branch.children.length);      
     };      
 
-    const createRoots = () => {            
-      const cpuRect = containerRef.value!.getBoundingClientRect();          
-      cpuCenter.x = cpuRect.right - (cpuRect.width * (platform.isMobile.value ? -0.33: 0.33));    
-      cpuCenter.y = cpuRect.height / 2;            
+    const createRoots = () => {
+      const cpuRect = containerRef.value!.getBoundingClientRect();
+      cpuCenter.x = cpuRect.right - (cpuRect.width * (platform.isMobile.value ? -0.33: 0.33));
+      cpuCenter.y = cpuRect.height / 2;
 
-      roots = Array.from({ length: rootCount }, (_, i) => {        
-        const angle = (i * Math.PI * 2 / rootCount) + (Math.random() * 0.2 - 0.1);            
-        return new Branch({            
-          startX: cpuCenter.x,            
-          startY: cpuCenter.y,            
-          angle,            
-          length: 120 + Math.random() * 100,            
-          thickness: 6,    
-          generation: 0    
-        });            
-      });         
-      updateEndBranches();         
-    };            
+      roots = Array.from({ length: rootCount }, (_, i) => {
+        const angle = (i * Math.PI * 2 / rootCount) + (Math.random() * 0.2 - 0.1);
+        return new Branch({
+          startX: cpuCenter.x,
+          startY: cpuCenter.y,
+          angle,
+          length: 120 + Math.random() * 100,
+          thickness: 6,
+          generation: 0
+        });
+      });
+
+      updateEndBranches();
+
+      // Pre-populate with particles
+      particles = [];
+      const initialParticleCount = 50; // Adjust this number as needed
+
+      // Get all branches including roots and their children
+      const allBranches = getAllBranches();
+
+      for (let i = 0; i < initialParticleCount; i++) {
+        // Weight the random selection to favor branches closer to the root
+        const branchIndex = Math.floor(Math.pow(Math.random(), 2) * allBranches.length);
+        const selectedBranch = allBranches[branchIndex];
+
+        const particle = new Particle(selectedBranch, particleSpeed);
+        // Random initial position along the branch
+        particle.progress = Math.random();
+        particles.push(particle);
+      }
+    };   
 
     const animate = (currentTime: number) => {            
       animationFrame = requestAnimationFrame(animate);            
@@ -183,20 +204,58 @@ function useCPUVisualization({
       drawCPU();    
     };            
 
-    const resizeObserver = new ResizeObserver(() => {            
-      canvas.width = window.innerWidth;            
-      canvas.height = window.innerHeight;          
-      createRoots();        
+    const resizeObserver = new ResizeObserver(() => {
+      // Clear any existing timeout
+      if (resizeTimeout.value !== null) {
+        clearTimeout(resizeTimeout.value);
+      }
+
+      // Set a new timeout
+      resizeTimeout.value = setTimeout(() => {
+        canvas.width = window.innerWidth;            
+        canvas.height = window.innerHeight;  
+
+        // Store old particles
+        const oldParticles = [...particles];
+
+        oldParticles.forEach(particle => {
+          const oldPoint = particle.currentBranch.getPointAtProgress(particle.progress);
+          let closestBranch = roots[0];
+          let minDistance = Infinity;
+
+          // Find the closest new branch
+          getAllBranches().forEach(branch => {
+            const branchPoint = branch.getPointAtProgress(0.5);
+            const distance = Math.hypot(
+              branchPoint.x - oldPoint.x,
+              branchPoint.y - oldPoint.y
+            );
+            if (distance < minDistance) {
+              minDistance = distance;
+              closestBranch = branch;
+            }
+          });
+
+          particle.updatePath(closestBranch);
+        });
+
+        particles = oldParticles;
+        resizeTimeout.value = null;
+      }, 150) as unknown as number; // Type assertion needed because setTimeout returns NodeJS.Timeout in some contexts
     });            
-    resizeObserver.observe(containerRef.value);            
+    resizeObserver.observe(containerRef.value);
+
+    // Update the cleanup function
+    cleanup(() => {
+      if (resizeTimeout.value !== null) {
+        clearTimeout(resizeTimeout.value);
+      }
+      cancelAnimationFrame(animationFrame);
+      resizeObserver.disconnect();
+    });          
 
     createRoots();            
-    animate(0);            
-
-    cleanup(() => {            
-      cancelAnimationFrame(animationFrame);            
-      resizeObserver.disconnect();            
-    });            
+    animate(0);                       
   });    
 
   useOnWindow('mousemove', $((e: MouseEvent) => {    

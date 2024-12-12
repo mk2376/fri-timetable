@@ -37,12 +37,8 @@
 /* Add this to your global CSS or component-specific CSS file */
 .mask-fade {
   position: relative;
-  mask-image: linear-gradient(to bottom, transparent, black 10%, black 80%, transparent);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 80%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, var(--text-color) 10%, var(--text-color) 90%, transparent);
   mask-size: 100% 100%;
-  -webkit-mask-size: 100% 100%;
   mask-repeat: no-repeat;
-  -webkit-mask-repeat: no-repeat;
   mask-position: 0 0;
-  -webkit-mask-position: 0 0;
 }
