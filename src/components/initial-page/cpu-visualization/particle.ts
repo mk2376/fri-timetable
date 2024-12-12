@@ -38,7 +38,18 @@ export class Particle {
     }  
 
     return this.dead;  
-  }  
+  }
+
+  updatePath(branch: Branch): void {
+    this.currentBranch = branch;
+    this.path = [];
+
+    let current: Branch | null = branch;
+    while (current !== null) {
+      this.path.push(current);
+      current = current.parent;
+    }
+  }
 
   draw(ctx: CanvasRenderingContext2D, color: string = '#ff0000'): void {  
     const point = this.currentBranch.getPointAtProgress(this.progress);  
