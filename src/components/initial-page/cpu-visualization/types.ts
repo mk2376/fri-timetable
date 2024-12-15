@@ -98,25 +98,52 @@ export class Branch {
   }  
 
   updateLength(mouseX: number, mouseY: number): void {  
-    const mouseAngle = Math.atan2(mouseY - this.startY, mouseX - this.startX);  
-    const angleDiff = Math.abs(((mouseAngle - this.angle + Math.PI) % (Math.PI * 2)) - Math.PI);  
-    const angleAlignment = Math.max(0, 1 - angleDiff / Math.PI);  
+      // Calculate distance from mouse to branch start
+      const distToMouse = Math.hypot(mouseX - this.startX, mouseY - this.startY);
+      const maxInfluenceDistance = 1500; // Adjust this value to control how far the mouse influence reaches
+      
+      // Only proceed with angle calculation if mouse is within influence distance
+      if (distToMouse < maxInfluenceDistance) {
+          // Calculate mouse angle relative to branch start point
+          const mouseAngle = Math.atan2(mouseY - this.startY, mouseX - this.startX);
+          
+          // Normalize both angles to 0-2π range
+          const normalizedMouseAngle = (mouseAngle + Math.PI * 2) % (Math.PI * 2);
+          const normalizedBranchAngle = (this.angle + Math.PI * 2) % (Math.PI * 2);
+          
+          // Calculate the smallest angle difference
+          let angleDiff = Math.abs(normalizedMouseAngle - normalizedBranchAngle);
+          if (angleDiff > Math.PI) {
+              angleDiff = Math.PI * 2 - angleDiff;
+          }
+          
+          // Calculate alignment (1 when angles match, 0 when perpendicular)
+          const angleAlignment = Math.max(0, 1 - angleDiff / Math.PI);
+          
+          // Calculate distance factor (1 when close, 0 when far)
+          const distanceFactor = Math.max(0, 1 - distToMouse / maxInfluenceDistance);
+          
+          // Combine angle and distance factors
+          const extensionFactor = 0.2 * angleAlignment * distanceFactor;
+          
+          this.targetLength = Math.min(
+              this.baseLength * (1 + extensionFactor),
+              this.maxExtension
+          );
+      } else {
+          // If mouse is too far, return to base length
+          this.targetLength = this.baseLength;
+      }
 
-    const extensionFactor = 0.2 * angleAlignment;  
-    this.targetLength = Math.min(  
-      this.baseLength * (1 + extensionFactor),  
-      this.maxExtension  
-    );  
+      this.currentLength += (this.targetLength - this.currentLength) * 0.1;  
+      this.path = this.generatePath();  
 
-    this.currentLength += (this.targetLength - this.currentLength) * 0.1;  
-    this.path = this.generatePath();  
-
-    this.children.forEach(child => {  
-      child.startX = this.path[3].x;  
-      child.startY = this.path[3].y;  
-      child.updateLength(mouseX, mouseY);  
-    });  
-  }  
+      this.children.forEach(child => {  
+          child.startX = this.path[3].x;  
+          child.startY = this.path[3].y;  
+          child.updateLength(mouseX, mouseY);  
+      });  
+  }
 
   draw(ctx: CanvasRenderingContext2D, color: string = '#ff0000'): void {  
     ctx.beginPath();  
@@ -144,10 +171,13 @@ export class Branch {
   }  
 
   updateFlowIntensity(mouseX: number, mouseY: number): void {  
-    const dist = Math.hypot(mouseX - this.path[3].x, mouseY - this.path[3].y);  
-    const maxDist = 300;  
-    this.flowIntensity = Math.max(0, 1 - dist / maxDist);  
-    this.children.forEach(child => child.updateFlowIntensity(mouseX, mouseY));  
+    const closestPoint = this.getClosestPointOnBranch(mouseX, mouseY);
+    const dist = Math.hypot(mouseX - closestPoint.x, mouseY - closestPoint.y);
+    const maxDist = 300;
+    
+    // Smooth falloff
+    this.flowIntensity = Math.pow(Math.max(0, 1 - dist / maxDist), 2);
+    this.children.forEach(child => child.updateFlowIntensity(mouseX, mouseY));
   }  
 
   getPointAtProgress(progress: number): Point {  
@@ -158,12 +188,26 @@ export class Branch {
       this.path[2],  
       this.path[3]  
     );  
-  }  
+  }
+
+  private getClosestPointOnBranch(mouseX: number, mouseY: number): Point {
+    let closestDist = Infinity;
+    let closestPoint = this.path[0];
+    
+    for (let t = 0; t <= 1; t += 0.1) {
+      const point = this.getPointAtProgress(t);
+      const dist = Math.hypot(mouseX - point.x, mouseY - point.y);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closestPoint = point;
+      }
+    }
+    
+    return closestPoint;
+  }
 }
 
-// Helpers
-
-function bezierPoint(t: number, p0: Point, p1: Point, p2: Point, p3: Point) {
+function bezierPoint(t: number, p0: Point, p1: Point, p2: Point, p3: Point): Point {
   const cX = 3 * (p1.x - p0.x);
   const bX = 3 * (p2.x - p1.x) - cX;
   const aX = p3.x - p0.x - cX - bX;

@@ -1,0 +1,57 @@
+/* Button with animated border */
+.animated-border {
+  border: none;
+  background-color: #ff4081;
+  color: white;
+  overflow: hidden;
+}
+
+.animated-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(90deg,
+      rgba(217, 15, 15, 0.2),
+      rgba(206, 97, 25, 0.6),
+      rgba(237, 14, 14, 0.2));
+  background-size: 200% 100%;
+  z-index: 0;
+  animation: light-strips 2s linear infinite;
+}
+
+.animated-border>* {
+  position: relative;
+  z-index: 1;
+}
+
+/* Search overlay animation */
+.searchOverlay {
+  background-color: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.dark .searchOverlay {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+@keyframes light-strips {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

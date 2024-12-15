@@ -123,12 +123,16 @@ function useCPUVisualization({
       cpuCenter.y = cpuRect.height / 2;
 
       roots = Array.from({ length: rootCount }, (_, i) => {
-        const angle = (i * Math.PI * 2 / rootCount) + (Math.random() * 0.2 - 0.1);
+        // Start angle from -PI to ensure even distribution
+        const baseAngle = (i * Math.PI * 2 / rootCount) - Math.PI;
+        // Add small random variation
+        const angle = baseAngle + (Math.random() * 0.2 - 0.1);
+        
         return new Branch({
           startX: cpuCenter.x,
           startY: cpuCenter.y,
           angle,
-          length: 120 + Math.random() * 100,
+          length: 70 + Math.random() * 170, // Variation
           thickness: 6,
           generation: 0
         });
@@ -138,22 +142,17 @@ function useCPUVisualization({
 
       // Pre-populate with particles
       particles = [];
-      const initialParticleCount = 50; // Adjust this number as needed
-
-      // Get all branches including roots and their children
+      const initialParticleCount = 50;
       const allBranches = getAllBranches();
 
       for (let i = 0; i < initialParticleCount; i++) {
-        // Weight the random selection to favor branches closer to the root
         const branchIndex = Math.floor(Math.pow(Math.random(), 2) * allBranches.length);
         const selectedBranch = allBranches[branchIndex];
-
         const particle = new Particle(selectedBranch, particleSpeed);
-        // Random initial position along the branch
         particle.progress = Math.random();
         particles.push(particle);
       }
-    };   
+    }; 
 
     const animate = (currentTime: number) => {            
       animationFrame = requestAnimationFrame(animate);            

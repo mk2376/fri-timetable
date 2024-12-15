@@ -1,7 +1,7 @@
 import { component$ } from '@builder.io/qwik';
 import { type  DocumentHead } from '@builder.io/qwik-city';
 import StudentIDForm from '~/components/initial-page/student-ID-form';
-import SelectionTabs from '~/components/initial-page/selection-tabs'
+import SelectionTabs from '~/components/initial-page/selection-tabs/index';
 import { CPUVisualization } from '~/components/initial-page/cpu-visualization/index';
 
 export { useFormLoader }  from '~/components/initial-page/student-ID-form';

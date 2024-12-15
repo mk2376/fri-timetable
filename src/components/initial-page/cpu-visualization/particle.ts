@@ -67,4 +67,4 @@ export class Particle {
     ctx.fillStyle = gradient;  
     ctx.fill();  
   }  
-}  
+}
