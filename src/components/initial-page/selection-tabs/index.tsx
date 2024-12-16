@@ -11,7 +11,7 @@ type Tab = {
   icon: keyof typeof Icons;  
 };  
 
-type NestedList = {  
+export type NestedList = {  
   id: string;  
   label: string;  
   children?: NestedList[];  
@@ -228,35 +228,20 @@ export default component$(() => {
             listPath.value = newPath;
             navigate(`?tab=${activeTab.value}&listPath=${newPath}`);
           }}
-        >
-          {currentList.value.map((item) => (
-            <li key={item.id} class="m-2">
-              <button
-                class="flex items-center justify-between text-left rounded-lg 
-                  bg-accent hover:bg-accent-hover shadow-md dark:shadow-white p-4"
-                onClick$={() => {
-                  const newPath = listPath.value
-                    ? `${listPath.value}/${item.id}`
-                    : item.id;
+          items={currentList.value}
+          onItemClick$={(item) => {
+            const newPath = listPath.value
+              ? `${listPath.value}/${item.id}`
+              : item.id;
 
-                  if (item.children) {
-                    listPath.value = newPath;
-                    navigate(`?tab=${activeTab.value}&listPath=${newPath}`);
-                  } else {
-                    navigate(`/timetable?${activeTab.value}=${newPath}`);
-                  }
-                }}
-              >
-                <span>{item.label}</span>
-                {item.children && (
-                  <Icons.Tree 
-                    class="ml-4 w-7 h-7 -my-10 flex-shrink-0 fill-primary" 
-                  />
-                )}
-              </button>
-            </li>
-          ))}
-        </ListContainer>
+            if (item.children) {
+              listPath.value = newPath;
+              navigate(`?tab=${activeTab.value}&listPath=${newPath}`);
+            } else {
+              navigate(`/timetable?${activeTab.value}=${newPath}`);
+            }
+          }}
+        />
       </div>    
     </div>  
   );  

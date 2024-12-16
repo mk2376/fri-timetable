@@ -2,6 +2,8 @@ import { $, component$, useSignal, useTask$, useStore, useOnWindow } from '@buil
 import { useLocation, useNavigate } from '@builder.io/qwik-city';
 import { Search, Cancel } from '../icons/qwik';
 import styles from './search.module.css'
+import ListContainer from '../initial-page/selection-tabs/list-container';
+import { tabDemoContent } from '../initial-page/selection-tabs';
 
 export default component$(() => {
   const location = useLocation();
@@ -30,7 +32,7 @@ export default component$(() => {
       params.delete('q');
     }
 
-    navigate(`${location.url.pathname}?${params.toString()}`, { replace: true });
+    navigate(`${location.url.pathname}?${params.toString()}`, { replaceState: true });
   });
 
   useOnWindow('popstate', $(() => {    
@@ -46,10 +48,8 @@ export default component$(() => {
   useOnWindow('keydown', $((e: KeyboardEvent) => {
     if (e.ctrlKey && e.key === 'f') {
       e.preventDefault();
-      isSearchOpen.value = true;
       updateSearchState(true);
     } else if (e.key === 'Escape' && isSearchOpen.value) {
-      isSearchOpen.value = false;
       updateSearchState(false);
     }
   }));    
@@ -101,9 +101,10 @@ export default component$(() => {
                   ref={inputRef}
                   bind:value={searchValue}
                   class="h-14 px-8 w-full rounded-xl
-                          backdrop-blur-lg shadow-lg hover:shadow-xl
-                          transition-all duration-300
-                          border border-text focus:border-2 focus:border-primary focus:outline-none"
+                    shadow-lg hover:shadow-xl
+                    transition-all duration-300
+                    bg-transparent backdrop-blur-[3rem]
+                    border border-text focus:border-2 focus:border-primary focus:outline-none"
                   placeholder="Search"
                   type="text"
                 />
@@ -116,6 +117,13 @@ export default component$(() => {
                   <Cancel class="h-4 w-4" color="var(--text-color)" />
                 </button>
               </div>
+
+              <ListContainer 
+                items={tabDemoContent["subjects"]}
+                onItemClick$={(item) => {
+                  navigate(`/timetable?${"TODO"}=${item.label}`);
+                }}
+              />
             </div>
           </div>
         </div>
