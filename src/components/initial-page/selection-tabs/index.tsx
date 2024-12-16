@@ -121,7 +121,12 @@ export default component$(() => {
   useTask$(({ track }) => {  
     const url = track(() => location.url);  
     const tabFromUrl = url.searchParams.get('tab');  
-    const listPathFromUrl = url.searchParams.get('listPath') || '';  
+    const listPathFromUrl = url.searchParams.get('listPath') || '';
+
+    if (!tabFromUrl) {
+      activeTab.value = "degree"
+    }
+
     if (tabFromUrl && tabFromUrl !== activeTab.value) {  
       activeTab.value = tabFromUrl;  
     }  
@@ -190,7 +195,7 @@ export default component$(() => {
           />  
 
           {/* Tab Buttons */}  
-          {tabs.map((tab) => {  
+          {tabs.map((tab, index) => {  
             const Icon = Icons[tab.icon];  
             const isActive = activeTab.value === tab.id;  
 
@@ -204,7 +209,7 @@ export default component$(() => {
                 onClick$={() => {
                   activeTab.value = tab.id;  
                   listPath.value = ""; // Reset to the root list  
-                  navigate(`?tab=${tab.id}&listPath=`); // Update the URL  
+                  navigate(index != 0 ? `?tab=${tab.id}`: "/"); // Update the URL  
                 }}  
               >  
                 <Icon class="w-10 h-10 md:w-7 md:h-7
@@ -226,7 +231,7 @@ export default component$(() => {
               .slice(0, -1)
               .join("/");
             listPath.value = newPath;
-            navigate(`?tab=${activeTab.value}&listPath=${newPath}`);
+            navigate(`?tab=${activeTab.value}` + newPath && `&listPath=${newPath}`);
           }}
           items={currentList.value}
           onItemClick$={(item) => {

@@ -114,7 +114,7 @@ export default component$(() => {
                       left-5
                       text-sm md:text-base
                       peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:-translate-x-3
-                      peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-primary
+                      peer-focus:top-2 peer-focus:text-[10px]
                       peer-valid:top-2 peer-valid:text-[10px] peer-valid:-translate-y-1/2 peer-valid:-translate-x-3"
                   >
                     Student ID
