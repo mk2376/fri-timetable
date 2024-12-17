@@ -1,8 +1,9 @@
 import { component$, useSignal, useComputed$, useTask$, useContext } from '@builder.io/qwik';  
 import { useNavigate, useLocation } from '@builder.io/qwik-city';  
 import * as Icons from '~/components/icons/qwik';  
-import styles from "./selection-tabs.module.css";  
+import styles from "./index.module.css";  
 import { Platform } from '~/lib/state/platform';
+import ListContainer from './list-container';
 
 type Tab = {  
   id: string;  
@@ -10,7 +11,7 @@ type Tab = {
   icon: keyof typeof Icons;  
 };  
 
-type NestedList = {  
+export type NestedList = {  
   id: string;  
   label: string;  
   children?: NestedList[];  
@@ -18,24 +19,9 @@ type NestedList = {
 
 type TabContent = {  
   [key: string]: NestedList[];  
-};  
+};
 
-export default component$(() => {  
-  const location = useLocation(); // Get the current URL and query parameters  
-  const navigate = useNavigate(); // For updating the URL  
-  const activeTab = useSignal(location.url.searchParams.get('tab') || 'degree'); // Default to 'level'  
-  const listPath = useSignal(location.url.searchParams.get('listPath') || ''); // Track the current list path  
-
-  const platform = useContext(Platform);
-
-  const tabs: Tab[] = [  
-    { id: 'degree', label: 'Degree', icon: 'Podium' },  
-    { id: 'teachers', label: 'Teachers', icon: 'Professors' },  
-    { id: 'classrooms', label: 'Classrooms', icon: 'Classrooms' },  
-    { id: 'subjects', label: 'Subjects', icon: 'Subjects' },  
-  ];  
-
-  const tabContent: TabContent = {  
+export const tabDemoContent: TabContent = {  
     degree: [  
       { id: '1', label: 'prva stopnja: univerzitetni', children: [  
         { id: '1-1', label: 'Second Level 1-1' },  
@@ -90,8 +76,27 @@ export default component$(() => {
       { id: '8', label: 'Elektronsko poslovanje' },  
       { id: '9', label: 'Fizika' },  
       { id: '10', label: 'Inteligentni sistemi' },  
+      { id: '11', label: 'Zmogljivi sistemi' },  
+      { id: '12', label: 'AI sistemi' },  
+      { id: '13', label: 'FRI sistemi' },  
+      { id: '14', label: 'Programiranje 1' },  
     ]  
   };  
+
+export default component$(() => {  
+  const location = useLocation(); // Get the current URL and query parameters  
+  const navigate = useNavigate(); // For updating the URL  
+  const activeTab = useSignal(location.url.searchParams.get('tab') || 'degree'); // Default to 'level'  
+  const listPath = useSignal(location.url.searchParams.get('listPath') || ''); // Track the current list path  
+
+  const platform = useContext(Platform);
+
+  const tabs: Tab[] = [  
+    { id: 'degree', label: 'Degree', icon: 'Podium' },  
+    { id: 'teachers', label: 'Teachers', icon: 'Professors' },  
+    { id: 'classrooms', label: 'Classrooms', icon: 'Classrooms' },  
+    { id: 'subjects', label: 'Subjects', icon: 'Subjects' },  
+  ];
 
   const activeIndex = useComputed$(() =>  
     tabs.findIndex((tab) => tab.id === activeTab.value)  
@@ -100,7 +105,7 @@ export default component$(() => {
   // Get the current list based on the listPath  
   const currentList = useComputed$(() => {  
     const path = listPath.value.split('/').filter(Boolean); // Split the path into levels  
-    let list = tabContent[activeTab.value]; // Start with the root list for the active tab  
+    let list = tabDemoContent[activeTab.value]; // Start with the root list for the active tab  
     for (const id of path) {  
       const item = list.find((item) => item.id === id);  
       if (item && item.children) {  
@@ -116,7 +121,12 @@ export default component$(() => {
   useTask$(({ track }) => {  
     const url = track(() => location.url);  
     const tabFromUrl = url.searchParams.get('tab');  
-    const listPathFromUrl = url.searchParams.get('listPath') || '';  
+    const listPathFromUrl = url.searchParams.get('listPath') || '';
+
+    if (!tabFromUrl) {
+      activeTab.value = "degree"
+    }
+
     if (tabFromUrl && tabFromUrl !== activeTab.value) {  
       activeTab.value = tabFromUrl;  
     }  
@@ -185,7 +195,7 @@ export default component$(() => {
           />  
 
           {/* Tab Buttons */}  
-          {tabs.map((tab) => {  
+          {tabs.map((tab, index) => {  
             const Icon = Icons[tab.icon];  
             const isActive = activeTab.value === tab.id;  
 
@@ -199,7 +209,7 @@ export default component$(() => {
                 onClick$={() => {
                   activeTab.value = tab.id;  
                   listPath.value = ""; // Reset to the root list  
-                  navigate(`?tab=${tab.id}&listPath=`); // Update the URL  
+                  navigate(index != 0 ? `?tab=${tab.id}`: "/"); // Update the URL  
                 }}  
               >  
                 <Icon class="w-10 h-10 md:w-7 md:h-7
@@ -213,64 +223,34 @@ export default component$(() => {
         </div>  
 
         {/* Nested List */}  
-        <div  
-          class="relative
-            w-full md:min-w-96 md:w-auto"  
-          style="transform: scaleX(-1)"  
-        >  
-          {/* Back Button */}  
-          {listPath.value && (  
-            <button
-              class="z-10 absolute p-2 right-0 top-1"
-              onClick$={() => {  
-                const newPath = listPath.value  
-                  .split("/")  
-                  .slice(0, -1)  
-                  .join("/"); // Go up one level
-                listPath.value = newPath;  
-                navigate(`?tab=${activeTab.value}&listPath=${newPath}`); // Update the URL  
-              }}  
-            >  
-              <Icons.ArrowLeft class="w-5 h-5 fill-accent hover:fill-accent-hover" />  
-            </button>  
-          )}  
+        <ListContainer 
+          showBackButton={!!listPath.value}
+          onBackClick$={() => {
+            const newPath = listPath.value
+              .split("/")
+              .slice(0, -1)
+              .join("/");
+            listPath.value = newPath;
 
-          {/* Add a wrapper div for the fading effect */}  
-          <div class={`relative h-[calc(100vh-220px-40px-56px)] md:max-h-[50rem] overflow-y-auto ${styles["mask-fade"]}`}>  
-            <ul class="pl-6 my-14" style="transform: scaleX(-1)">  
-              {currentList.value.map((item) => (  
-                <li key={item.id} class="m-2">  
-                  <button  
-                    class="flex items-center justify-between text-left rounded-lg bg-accent hover:bg-accent-hover shadow-md dark:shadow-white p-4"  
-                    onClick$={() => {  
-                      const newPath = listPath.value
-                        ? `${listPath.value}/${item.id}`
-                        : item.id;  
+            const query = (activeTab.value != "degree" ? `?tab=${activeTab.value}`: "") + (newPath ? `&listPath=${newPath}`: "")
 
-                      if (item.children) {  
-                        // Nested list  
-                        listPath.value = newPath;  
-                        navigate(  
-                          `?tab=${activeTab.value}&listPath=${newPath}`  
-                        ); // Update the URL  
-                      } else {  
-                        // Leaf  
-                        navigate(  
-                          `/timetable?${activeTab.value}=${newPath}`  
-                        ); // Redirect to timetable  
-                      }  
-                    }}  
-                  >  
-                    <span>{item.label}</span>
-                    {item.children && (
-                      <Icons.Tree class="ml-4 w-7 h-7 -my-10 flex-shrink-0 fill-primary" />  
-                    )}  
-                  </button>  
-                </li>  
-              ))}  
-            </ul>  
-          </div>  
-        </div>  
+            navigate(query || "/");
+          }}
+          items={currentList.value}
+          onItemClick$={(item) => {
+            const newPath = listPath.value
+              ? `${listPath.value}/${item.id}`
+              : item.id;
+
+            if (item.children) {
+              listPath.value = newPath;
+              navigate(`?tab=${activeTab.value}&listPath=${newPath}`);
+            } else {
+              navigate(`/timetable?${activeTab.value}=${newPath}`);
+            }
+          }}
+          listStyle="h-[calc(100vh-280px)] md:h-[50vh]"
+        />
       </div>    
     </div>  
   );  
