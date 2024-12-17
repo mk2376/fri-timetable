@@ -1,5 +1,5 @@
 // src/components/list-container/list-container.tsx
-import { component$, type QRL } from '@builder.io/qwik';
+import { type ClassList, component$, type Signal, type QRL } from '@builder.io/qwik';
 import { ArrowLeft, Tree } from '~/components/icons/qwik';  
 import styles from "./list-container.module.css";
 import type { NestedList } from './index'; // Move types to separate file
@@ -9,13 +9,15 @@ interface ListContainerProps {
   onBackClick$?: QRL<() => void>;
   items: NestedList[];
   onItemClick$: QRL<(item: NestedList) => void>;
+  listStyle?: ClassList | Signal<ClassList>;
 }
 
 export default component$<ListContainerProps>(({ 
   showBackButton = false, 
   onBackClick$,
   items,
-  onItemClick$
+  onItemClick$,
+  listStyle
 }) => {
   return (
     <div class="relative w-full md:min-w-96 md:w-auto" 
@@ -31,7 +33,7 @@ export default component$<ListContainerProps>(({
       )}
 
       {/* List with fade effect */}
-      <div class={`relative h-[calc(100vh-220px-40px-56px)] md:max-h-[50rem] overflow-y-auto ${styles["mask-fade"]}`}>
+      <div class={`relative overflow-y-auto ${styles["mask-fade"]} ${listStyle}`}>
         <ul class="pl-6 my-14" style="transform: scaleX(-1)">
           {items.map((item) => (
             <li key={item.id} class="m-2">

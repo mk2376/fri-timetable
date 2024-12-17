@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss'
+import plugin from 'tailwindcss/plugin'
 
 export default {
   darkMode: ['selector'],
@@ -30,5 +31,8 @@ export default {
   },
 	plugins: [
 		require('tailwindcss-animate'),
+    plugin(({ addVariant }) => {
+      addVariant('peer-active-input', ':is(.peer:focus, .peer:not(:placeholder-shown)) ~ &')
+    })
 	],
 } satisfies Config

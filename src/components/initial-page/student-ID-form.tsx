@@ -1,4 +1,4 @@
-import { $, component$, type QRL } from '@builder.io/qwik';
+import { $, component$, useSignal, type QRL } from '@builder.io/qwik';
 import { routeLoader$, useNavigate } from '@builder.io/qwik-city';
 import { formAction$, useForm, valiForm$, clearError, setValue, validate, type InitialValues, type SubmitHandler } from '@modular-forms/qwik';
 import styles from "./student-ID-form.module.css";
@@ -26,7 +26,7 @@ export const useFormAction = formAction$<StudentIDForm>(() => {
 }, valiForm$(StudentIDSchema));
 
 export default component$(() => {
-  // useStylesScoped$(scoped)
+  const inputRef = useSignal<HTMLInputElement>();
 
   const navigate = useNavigate();
 
@@ -45,8 +45,8 @@ export default component$(() => {
   });
  
   return (
-    <div class="relative h-20 flex items-center justify-center md:items-start">
-      <Form onSubmit$={handleSubmit} >
+    <div class="relative h-20 flex items-center justify-center md:items-start px-4 md:px-0 w-full md:w-auto">
+      <Form onSubmit$={handleSubmit} class="w-full md:w-auto">
         <Field name="studentID">
           {(field, props) => {
             const isValid = !studentIDForm.invalid && field.value?.length == 8; // Check if the input is valid  
@@ -58,22 +58,23 @@ export default component$(() => {
                 <div class="relative">
                   <input
                     {...props}
-                    class="peer h-full w-full rounded-[7px] border border-text bg-transparent px-3 pt-[13px] pb-2.5 pr-20 backdrop-blur-[3px] dark:backdrop-blur-[2px]
-                      text-sm md:text-base placeholder-transparent
-                      focus:border-2 focus:border-primary focus:outline-none"
+                    ref={inputRef}
+                    class="peer h-full w-full rounded-[7px] border border-text bg-transparent 
+                          px-3 md:px-4 pt-[13px] pb-2.5 pr-[4.5rem] md:pr-20 backdrop-blur-sm
+                          text-sm md:text-base placeholder-transparent
+                          focus:border-2 focus:border-primary focus:outline-none"
                     type="studentID"
                     placeholder="Student ID" // Required for peer-placeholder to work
                     required
                     maxLength={8}
                     inputMode="numeric" // Mobile keyboard
-                    onInput$={(e: any) => {
-                      // Sanitize input and update the form state  
-                      const value = e.target.value
-
-                      //console.log(value)
-
-                      const sanitizedValue = value.replace(/[^0-9]/g, ""); // Remove non-numeric characters  
-                      e.target.value = sanitizedValue;
+                    onInput$={(e: InputEvent) => {
+                      // Get the full input value from the input element
+                      const inputElement = e.target as HTMLInputElement;
+                      const currentValue = inputElement.value;
+                      
+                      const sanitizedValue = currentValue.replace(/[^0-9]/g, ""); // Remove non-numeric characters  
+                      inputRef.value!.value = sanitizedValue;
                       setValue(studentIDForm, 'studentID', sanitizedValue) // Update the form state with the sanitized value
                       
                       if (sanitizedValue == "") {
@@ -84,15 +85,15 @@ export default component$(() => {
 
                       validate(studentIDForm)
                     }}
-                    onFocusOut$={(e: any) => {
-                      const value = e.target.value
+                    onFocusOut$={(e: FocusEvent) => {
+                      const value = (e.target as HTMLInputElement).value
                       if (value == "") {
                         clearError(studentIDForm, 'studentID')
                         console.log("onFocusOut clearError")
                         return
                       }
                     }}
-                    onKeyDown$={(e) => {
+                    onKeyDown$={(e: KeyboardEvent) => {
                       // Allow only numeric keys, backspace, delete, arrow keys, and tab
                       if (
                         !(
@@ -111,24 +112,28 @@ export default component$(() => {
                   />
                   <label
                     class="pointer-events-none absolute transition-all
-                      left-5
-                      text-sm md:text-base
-                      peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:-translate-x-3
-                      peer-focus:top-2 peer-focus:text-[10px]
-                      peer-valid:top-2 peer-valid:text-[10px] peer-valid:-translate-y-1/2 peer-valid:-translate-x-3"
+                          left-4
+                          text-sm md:text-base
+                          top-1/2 -translate-y-1/2 peer-active-input:-translate-x-2
+                          peer-active-input:top-2 peer-active-input:text-[10px]"
                   >
                     Student ID
                   </label>
                   <button
-                    class={`absolute right-1.5 top-1/2 -translate-y-1/2 z-10 rounded py-2 px-4 text-xs md:text-sm font-bold uppercase text-white shadow-md transition-all hover:shadow-lg focus:opacity-85 active:opacity-85
-                        ${isValid ? styles["animated-border"] : 'bg-primary'
-                      }`} type="submit"
+                    class={`absolute right-1.5 top-1/2 -translate-y-1/2 z-10 
+                            rounded py-2 md:py-2 px-2 md:px-4 
+                            text-xs md:text-sm font-bold uppercase text-white 
+                            shadow-md transition-all hover:shadow-lg 
+                            focus:opacity-85 active:opacity-85
+                            ${isValid ? styles["animated-border"] : 'bg-primary'
+                          }`} 
+                    type="submit"
                   >
                     Show timetable
                   </button>
                 </div>
                 {field.error && (
-                  <div class="absolute left-0 pt-1 text-xs md:text-base text-primary backdrop-blur-[3px] dark:backdrop-blur-[2px]">  
+                  <div class="absolute left-0 pt-1 text-xs md:text-base text-primary backdrop-blur-sm px-3 md:px-0">  
                     {field.error}  
                   </div>  
                 )}

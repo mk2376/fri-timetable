@@ -18,7 +18,6 @@ export default component$(() => {
   const searchContainerRef = useSignal<HTMLDivElement>();
   const filteredItems = useSignal(tabDemoContent["subjects"]);
   const DEBOUNCE_DELAY = 300;
-  const CLICK_PADDING = 70;
 
 const updateSearchState = $((open: boolean, query?: string) => {
     isSearchOpen.value = open;
@@ -87,17 +86,11 @@ const updateSearchState = $((open: boolean, query?: string) => {
     }
   });
 
-  const handleOutsideClick = $((e: PointerEvent) => {
-    const rect = searchContainerRef.value?.getBoundingClientRect();
-    if (!rect) return;
-
-    const { clientX: x, clientY: y } = e;
-    const inBounds = x >= (rect.left - CLICK_PADDING) && 
-                    x <= (rect.right + CLICK_PADDING) && 
-                    y >= (rect.top - CLICK_PADDING) && 
-                    y <= (rect.bottom + CLICK_PADDING);
-
-    if (!inBounds) updateSearchState(false);
+  const handleOutsideClick = $((event: MouseEvent) => {
+    // If we clicked outside the search box ref, close the search
+    if (!searchContainerRef.value?.contains(event.target as Node)) {
+      updateSearchState(false);
+    }
   });
 
   return (
@@ -109,7 +102,7 @@ const updateSearchState = $((open: boolean, query?: string) => {
                transition-all duration-300
                text-sm md:text-base
                border-solid border-[1px] border-text bg-transparent px-5 pt-[13px] pb-2.5 
-               backdrop-blur-[3px] dark:backdrop-blur-[2px]
+               backdrop-blur-sm
                hover:border-primary
                focus:border-2 focus:border-primary focus:outline-none"
         aria-label="Open search"
@@ -123,60 +116,72 @@ const updateSearchState = $((open: boolean, query?: string) => {
         class={`fixed inset-0 z-50
           backdrop-blur bg-white/30 dark:bg-black/30
           transition-all duration-300 ${isSearchOpen.value ? styles.searchOverlayEnter : styles.searchOverlayExit}`}
-        onClick$={handleOutsideClick}
         onAnimationEnd$={() => {
           isSearchOpen.value && inputRef.value?.focus();
         }}
+        onClick$={handleOutsideClick}
       >
         <div 
           ref={searchContainerRef}
-          class="absolute left-1/2 top-[20%] w-full max-w-xl -translate-x-1/2
+          class="max-w-2xl mx-auto w-full md:p-10 mt-10 md:mt-[5%] 2xl:mt-[10%]
                 transform transition-transform duration-300 ease-out"
         >
-          <div class="mx-4 relative">
-            <div class="relative flex items-center">
-              <input
-                ref={inputRef}
-                bind:value={searchValue}
-                onKeyDown$={handleKeyDown}
-                class="peer h-14 px-8 w-full rounded-xl
+              <div class="relative flex items-center mx-4 md:mx-auto">
+                <input
+                  ref={inputRef}
+                  bind:value={searchValue}
+                  onKeyDown$={handleKeyDown}
+                  class="peer w-full h-12 md:h-14
+                        px-4 md:px-8
+                        rounded-lg md:rounded-xl
                         shadow-lg hover:shadow-xl
-                        placeholder-transparent bg-transparent backdrop-blur-[3rem]
+                        placeholder-transparent 
+                        backdrop-blur-md bg-white/50 dark:bg-black/50
                         border border-text 
-                        focus:border-2 focus:border-primary focus:outline-none"
-                placeholder="Search"
-                type="text"
-                aria-label="Search input"
-              />
-              <label
-                class="pointer-events-none absolute transition-all left-7
-                  text-sm md:text-base
-                  peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:-translate-x-2
-                  peer-focus:top-2.5 peer-focus:text-[11px]
-                  peer-[&:not(:placeholder-shown)]:top-2.5 peer-[&:not(:placeholder-shown)]:text-[11px] peer-[&:not(:placeholder-shown)]:-translate-y-1/2 peer-[&:not(:placeholder-shown)]:-translate-x-2"
-              >
-                Search
-              </label>
-              <button
-                onClick$={() => updateSearchState(false)}
-                class="absolute right-4 p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-full"
-                aria-label="Close search"
-              >
-                <Cancel class="h-4 w-4" color="var(--text-color)" />
-              </button>
-            </div>
+                        text-base md:text-lg
+                        focus:border-2 focus:border-primary focus:outline-none
+                        transition-all duration-200"
+                  placeholder="Search"
+                  type="text"
+                  aria-label="Search input"
+                />
+                <label
+                  class="pointer-events-none absolute transition-all
+                        top-1/2 -translate-y-1/2
+                        left-4 md:left-7 peer-active-input:left-3 md:peer-active-input:left-6
+                        text-sm md:text-base
+                        peer-active-input:top-2 md:peer-active-input:top-2.5
+                        peer-active-input:text-[10px] md:peer-active-input:text-[11px]"
+                >
+                  Search
+                </label>
+                <button
+                  onClick$={() => updateSearchState(false)}
+                  class="absolute right-2 md:right-4 
+                        p-1.5 md:p-2
+                        hover:bg-gray-200 dark:hover:bg-gray-800 
+                        rounded-full
+                        transition-colors duration-200"
+                  aria-label="Close search"
+                >
+                  <Cancel class="h-3 w-3 md:h-4 md:w-4" color="var(--text-color)" />
+                </button>
+              </div>
 
-            <div class="mt-4">
-              <ListContainer 
-                items={filteredItems.value}
-                onItemClick$={$(async (item) => {
-                  await updateSearchState(true, searchValue.value);
-                  const url = new URL(location.url.protocol + location.url.host + `/timetable?TODO=${encodeURIComponent(item.label)}`)
-                  await navigate(url);
-                })}
-              />
-            </div>
-          </div>
+              <div class="mt-3 md:mt-4">
+                <ListContainer 
+                  items={filteredItems.value}
+                  onItemClick$={$(async (item) => {
+                    await updateSearchState(true, searchValue.value);
+                    const url = new URL(
+                      location.url.protocol + location.url.host + 
+                      `/timetable?TODO=${encodeURIComponent(item.label)}`
+                    );
+                    await navigate(url);
+                  })}
+                  listStyle="max-h-[calc(100vh-200px)] md:h-[60vh] md:max-h-min"
+                />
+              </div>
         </div>
       </div>
     </div>

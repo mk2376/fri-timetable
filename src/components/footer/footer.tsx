@@ -13,11 +13,12 @@ export default component$(() => {
           <a href="https://github.com/mk2376/fri-timetable"     
             target="_blank"  
             class="flex items-center"
-          >  
-            { /* eslint-disable-next-line qwik/jsx-img */ }    
-            <img     
+          >
+            <img 
+              height={16}
+              width={16}
               src={"/media/" + (mode.isDarkTheme.value ? "github-mark-white.svg" : "github-mark.svg")}     
-              class="h-4 w-4" // Changed to fixed width and height  
+              class="h-4 w-4"
               alt="GitHub"  
             />    
           </a>    

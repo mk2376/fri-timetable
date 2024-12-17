@@ -231,7 +231,10 @@ export default component$(() => {
               .slice(0, -1)
               .join("/");
             listPath.value = newPath;
-            navigate(`?tab=${activeTab.value}` + newPath && `&listPath=${newPath}`);
+
+            const query = (activeTab.value != "degree" ? `?tab=${activeTab.value}`: "") + (newPath ? `&listPath=${newPath}`: "")
+
+            navigate(query || "/");
           }}
           items={currentList.value}
           onItemClick$={(item) => {
@@ -246,6 +249,7 @@ export default component$(() => {
               navigate(`/timetable?${activeTab.value}=${newPath}`);
             }
           }}
+          listStyle="h-[calc(100vh-280px)] md:h-[50vh]"
         />
       </div>    
     </div>  
