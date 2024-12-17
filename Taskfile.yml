@@ -1,0 +1,19 @@
+version: "3"
+
+vars:
+  IMAGE_NAME: fri-timetable
+  IMAGE_LABEL: latest
+
+tasks:
+  build:
+    cmd: docker build -t "{{.IMAGE_NAME}}:{{.IMAGE_LABEL}}" -f "Dockerfile" .
+
+  run:
+    deps:
+      - task: build
+    cmd: docker-compose -f docker-compose.yml -p {{.IMAGE_NAME}} up --force-recreate --remove-orphans
+
+  deploy:
+    deps:
+      - task: build
+    cmd: docker-compose -f docker-compose.yml -p {{.IMAGE_NAME}} up -d --force-recreate --remove-orphans
