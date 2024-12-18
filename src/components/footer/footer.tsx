@@ -1,9 +1,13 @@
 import { component$, useContext } from "@builder.io/qwik";      
-import { Mode } from "~/lib/state/mode";  
+import { Mode } from "~/lib/state/mode";
+import GithubLogoLight from "~/media/github-mark.svg";
+import GithubLogoDark from "~/media/github-mark-white.svg";
   
 export default component$(() => {    
   const mode = useContext(Mode);    
   
+  const GithubLogo = mode.isDarkTheme.value ? GithubLogoDark : GithubLogoLight;
+
   return (      
     <footer class="fixed bottom-0 w-full shadow-lg mx-auto px-4 py-4 invisible md:visible">      
       <div class="flex justify-center items-center text-center text-sm">    
@@ -14,12 +18,12 @@ export default component$(() => {
             target="_blank"  
             class="flex items-center"
           >
-            <img 
-              height={16}
+            <img
               width={16}
-              src={"/media/" + (mode.isDarkTheme.value ? "github-mark-white.svg" : "github-mark.svg")}     
+              height={16}
+              src={GithubLogo}
               class="h-4 w-4"
-              alt="GitHub"  
+              alt="Github"
             />    
           </a>    
         </div>      

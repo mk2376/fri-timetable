@@ -6,11 +6,4 @@ services:
       - 3000:3000 # UI
     environment:
       TZ: Europe/Ljubljana
-      ORIGIN: https://test.com
-    deploy:
-      resources:
-        limits:
-          cpus: "5"
-          memory: 3G
-        reservations:
-          memory: 300M
+      ORIGIN: localhost:3000
