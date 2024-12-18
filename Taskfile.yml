@@ -17,3 +17,11 @@ tasks:
     deps:
       - task: build
     cmd: docker-compose -f docker-compose.yml -p {{.IMAGE_NAME}} up -d --force-recreate --remove-orphans
+
+  test:
+    vars:
+      ADDRESS: http://localhost:3000
+    cmds:
+      - npx lighthouse {{.ADDRESS}} --preset=desktop --view
+      - read -p "Press Enter to test mobile" </dev/tty
+      - npx lighthouse {{.ADDRESS}} --form-factor mobile --screenEmulation.mobile --view

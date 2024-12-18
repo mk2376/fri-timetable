@@ -290,13 +290,3 @@ export const Cancel = component$((props: QwikIntrinsicElements['svg'] & { color?
     </svg>
   )
 });
-
-
-
-
-
-
-
-
-
-
