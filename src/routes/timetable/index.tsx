@@ -109,11 +109,11 @@ const DesktopTimetable = component$((props: timetableProps) => {
   return (
     <div class="flex flex-row shadow-md rounded-lg overflow-auto">
       <div class="flex flex-col sticky left-0 z-50">
-        <div class="py-4 border border-gray-400">
+        <div class="py-4 border-b border-gray-300">
           <br />
         </div>
         {hours.map((hour) => (
-          <div key={hour} class="flex h-16 pl-2 border border-gray-400">
+          <div key={hour} class="flex h-16 pl-2 border-b border-gray-300">
             <div class="text-right">
               {`${dayjs().hour(hour).format("HH")}:00`}
             </div>
@@ -124,7 +124,7 @@ const DesktopTimetable = component$((props: timetableProps) => {
       {days.map((day, index) => {
         const dayGroupings = props.daysData[index];
         return (
-          <div key={day} class="flex flex-col min-w-[20%] border border-gray-800">
+          <div key={day} class="flex flex-col min-w-[20%] border-l border-gray-800">
             <div class="flex flex-row py-4 font-bold text-center border-b border-gray-600">
               <div class="flex flex-col w-full">{day}</div>
             </div>
@@ -157,13 +157,13 @@ const MobileTimetable = component$((props: timetableProps) => {
     <>
       <div class="flex flex-row">
         <div class="flex flex-col">
-          <div class="py-4 border border-gray-400">
+          <div class="py-4 border-y border-gray-300">
             <br />
           </div>
           {hours.map((hour) => (
             <div
               key={hour}
-              class="flex h-16 pl-2 border border-gray-400"
+              class="flex h-16 pl-2 border-b border-gray-300"
             >
               <div class="text-right">
                 {`${dayjs().hour(hour).format('HH')}:00`}
