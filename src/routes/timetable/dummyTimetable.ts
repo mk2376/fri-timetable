@@ -202,6 +202,264 @@ export const data = {
     ]
 }
 
+
+export const data2 = {
+  subjects: [
+      {
+        name: {
+          shortName: "KČR",
+          fullName: "Komunikacija Človek Računalnik"
+        },
+        color: "rgba(205, 201, 233, 0.7)",
+        activities: [
+          {
+            activityType: "P",
+            location: "P01",
+            teacher: ["Luka Čehovin Zajc", "Ciril Bohak"],
+            day: "TOR",
+            hourStart: 13,
+            hourEnd: 16
+          },
+          {
+              activityType: "LV",
+              location: "PR06",
+              teacher: ["Luka Čehovin Zajc"],
+              day: "ČET",
+              hourStart: 15,
+              hourEnd: 17
+          },
+          {
+              activityType: "LV",
+              location: "PR17",
+              teacher: ["Luka Čehovin Zajc"],
+              day: "PET",
+              hourStart: 15,
+              hourEnd: 17
+          },
+          {
+              activityType: "LV",
+              location: "PR08",
+              teacher: ["Ciril Bohak"],
+              day: "PON",
+              hourStart: 7,
+              hourEnd: 9
+          },
+          {
+              activityType: "LV",
+              location: "PR06",
+              teacher: ["Ciril Bohak"],
+              day: "PON",
+              hourStart: 13,
+              hourEnd: 15
+          },
+          {
+              activityType: "LV",
+              location: "PR11",
+              teacher: ["Luka Čehovin Zajc"],
+              day: "TOR",
+              hourStart: 9,
+              hourEnd: 11
+          },
+      ]
+      },
+      {
+          name: {
+            shortName: "P",
+            fullName: "Funkcijsko Programiranje"
+          },
+          color: "rgba(165, 233, 221, 0.7)",
+          activities: [
+            {
+              activityType: "P",
+              location: "P01",
+              teacher: ["Zoran Bosnić"],
+              day: "SRE",
+              hourStart: 7,
+              hourEnd: 10
+            },
+            {
+              activityType: "LV",
+              location: "PR06",
+              teacher: ["Klemen Klanjšček"],
+              day: "TOR",
+              hourStart: 9,
+              hourEnd: 11
+            },
+            {
+                activityType: "LV",
+                location: "PR08",
+                teacher: ["Klemen Klanjšček"],
+                day: "ČET",
+                hourStart: 15,
+                hourEnd: 17
+            },
+            {
+                activityType: "LV",
+                location: "PR07",
+                teacher: ["Klemen Klanjšček"],
+                day: "ČET",
+                hourStart: 17,
+                hourEnd: 19
+            },
+            {
+                activityType: "LV",
+                location: "PR11",
+                teacher: ["Klemen Klanjšček"],
+                day: "PET",
+                hourStart: 8,
+                hourEnd: 10
+            },
+            {
+                activityType: "LV",
+                location: "PR08",
+                teacher: ["Klemen Klanjšček"],
+                day: "PET",
+                hourStart: 10,
+                hourEnd: 12
+            },
+        ]
+      },
+      {
+          name: {
+            shortName: "IVZ",
+            fullName: "Informacijska Varnost in Zasebnost"
+          },
+          color: "rgba(255, 255, 200, 0.7)",
+          activities: [
+            {
+              activityType: "P",
+              location: "P04",
+              teacher: ["Denis Trček"],
+              day: "PET",
+              hourStart: 13,
+              hourEnd: 16
+            },
+            {
+              activityType: "LV",
+              location: "PR16",
+              teacher: ["David Jelenc"],
+              day: "TOR",
+              hourStart: 11,
+              hourEnd: 13
+            },
+            {
+                activityType: "LV",
+                location: "PR10",
+                teacher: ["David Jelenc"],
+                day: "TOR",
+                hourStart: 15,
+                hourEnd: 17
+            },
+            {
+                activityType: "LV",
+                location: "PR15",
+                teacher: ["David Jelenc"],
+                day: "PET",
+                hourStart: 11,
+                hourEnd: 13
+            }
+        ]
+      },
+      {
+          name: {
+              shortName: "TEST",
+              fullName: "Testiranje"
+            },
+            color: "rgba(255, 255, 56, 0.7)",
+            activities: [
+              {
+                activityType: "AV",
+                location: "P04",
+                teacher: ["Prosto prosto"],
+                day: "TOR",
+                hourStart: 13,
+                hourEnd: 15
+              },
+              {
+                  activityType: "AV",
+                  location: "P05",
+                  teacher: ["Prosto prosto"],
+                  day: "TOR",
+                  hourStart: 14,
+                  hourEnd: 16
+              },
+              {
+                  activityType: "AV",
+                  location: "P07",
+                  teacher: ["Prosto prosto"],
+                  day: "TOR",
+                  hourStart: 15,
+                  hourEnd: 17
+              },
+              {
+                  activityType: "AV",
+                  location: "P08",
+                  teacher: ["Prosto prosto"],
+                  day: "TOR",
+                  hourStart: 15,
+                  hourEnd: 17
+              },
+              {
+                activityType: "AV",
+                location: "P08",
+                teacher: ["Prosto prosto"],
+                day: "TOR",
+                hourStart: 15,
+                hourEnd: 17
+              },
+              {
+                activityType: "AV",
+                location: "P08",
+                teacher: ["Prosto prosto"],
+                day: "SRE",
+                hourStart: 15,
+                hourEnd: 17
+              },
+              {
+                activityType: "AV",
+                location: "P08",
+                teacher: ["Prosto prosto"],
+                day: "SRE",
+                hourStart: 15,
+                hourEnd: 17
+              },
+              {
+                activityType: "AV",
+                location: "P08",
+                teacher: ["Prosto prosto"],
+                day: "SRE",
+                hourStart: 15,
+                hourEnd: 17
+              },
+              {
+                activityType: "AV",
+                location: "P08",
+                teacher: ["Prosto prosto"],
+                day: "PON",
+                hourStart: 14,
+                hourEnd: 16
+              },
+              {
+                activityType: "AV",
+                location: "P08",
+                teacher: ["Prosto prosto"],
+                day: "PON",
+                hourStart: 14,
+                hourEnd: 16
+              },
+              {
+                activityType: "AV",
+                location: "P08",
+                teacher: ["Prosto prosto"],
+                day: "PON",
+                hourStart: 14,
+                hourEnd: 16
+              },
+          ]
+      }
+  ]
+}
+
 function transformTimes(data: any): Timetable {
     // Helper function to get the base date of the week for a specific day
     function getBaseDate(day: string, weekStart: Date): Date {
@@ -259,4 +517,4 @@ function transformTimes(data: any): Timetable {
     };
   }
 
-export const dummyTimetable = transformTimes(data);
+export const dummyTimetable = transformTimes(data2);

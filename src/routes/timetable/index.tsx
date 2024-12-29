@@ -39,7 +39,7 @@ const TimetableColumn = component$((props: timetableColumnProps) => {
         const groupHours = Array.from({ length: grouping.end.getHours() - grouping.start.getHours()}, (_, i) => i + grouping.start.getHours());
         const maxActivityCol = grouping.activities.reduce((acc, el) => (!acc || el.col > acc) ? el.col : acc, 0);
         return (
-          <div key={`${day}-${grouping.start}-${grouping.end}`} class="flex flex-row ">
+          <div key={`${day}-${grouping.start}-${grouping.end}`} class="flex flex-row">
             {
               Array.from({length: maxActivityCol + 1}, (_, i) => i).map((i) => {
                 return (
@@ -54,11 +54,11 @@ const TimetableColumn = component$((props: timetableColumnProps) => {
                             ?
                             <div
                               key={`${day}-${hour}`}
-                              class="flex flex-row w-full h-16 border-b border-gray-300 relative"
+                              class="flex flex-row w-full min-w-full h-16 border-b border-gray-300 relative"
                             >
                               <div
                                 key={activity.dateFrom.toString()}
-                                class="flex flex-col w-full h-full dark:text-black /* white does not provide enough contrast */ rounded-lg p-1 z-10 m-1"
+                                class="flex flex-col w-full h-full dark:text-black /* white does not provide enough contrast */ rounded-lg p-1 z-10 m-1 overflow-hidden text-nowrap"
                                 style={{
                                   backgroundColor: `${activity.color}`,
                                   height: `${dayjs(activity.dateTo).diff(dayjs(activity.dateFrom), "hour") * 3.7}rem`,
@@ -107,9 +107,9 @@ const DesktopTimetable = component$((props: timetableProps) => {
   const hours = Array.from({ length: 15 }, (_, i) => i + 7);
 
   return (
-    <div class="flex flex-row shadow-md rounded-lg overflow-auto">
-      <div class="flex flex-col sticky left-0 z-50">
-        <div class="py-4 border-b border-gray-300">
+    <div class="flex flex-row shadow-md rounded-lg w-full overflow-x-scroll">
+      <div class="flex flex-col sticky left-0 z-50 bg-white dark:bg-black">
+        <div class="py-4 border-b border-gray-800">
           <br />
         </div>
         {hours.map((hour) => (
@@ -124,7 +124,7 @@ const DesktopTimetable = component$((props: timetableProps) => {
       {days.map((day, index) => {
         const dayGroupings = props.daysData[index];
         return (
-          <div key={day} class="flex flex-col min-w-[20%] border-l border-gray-800">
+          <div key={day} class="flex flex-col w-[20%] min-w-max border-l border-gray-800">
             <div class="flex flex-row py-4 font-bold text-center border-b border-gray-600">
               <div class="flex flex-col w-full">{day}</div>
             </div>
@@ -156,8 +156,8 @@ const MobileTimetable = component$((props: timetableProps) => {
   return (
     <>
       <div class="flex flex-row">
-        <div class="flex flex-col">
-          <div class="py-4 border-y border-gray-300">
+        <div class="flex flex-col sticky left-0 z-50 bg-white dark:bg-black">
+          <div class="py-4 border-y border-gray-800">
             <br />
           </div>
           {hours.map((hour) => (
@@ -172,8 +172,8 @@ const MobileTimetable = component$((props: timetableProps) => {
           ))}
         </div>
 
-        <div class="flex flex-col w-full border border-gray-800">
-          <div class="flex flex-row sticky top-0 z-50 font-bold text-center items-center shadow-lg border-b border-gray-600">
+        <div class="flex flex-col w-full border border-gray-800 overflow-x-scroll">
+          <div class="flex flex-row sticky left-0 top-0 z-50 font-bold text-center items-center shadow-lg border-b border-gray-600 bg-white dark:bg-black">
             {daysShort.map((day, index) => (
               <div
                 key={index}
@@ -184,6 +184,7 @@ const MobileTimetable = component$((props: timetableProps) => {
                 }`}
                 onClick$={() => (selectedDaySignal.value = days[index])}
               >
+
                 <span>{day}</span>
 
                 <div
@@ -196,7 +197,7 @@ const MobileTimetable = component$((props: timetableProps) => {
           </div>
 
           <div class="flex flex-row w-full">
-            <div class="flex flex-col w-full">
+            <div class="flex flex-col w-full min-w-max">
               <TimetableColumn
                 dayData={props.daysData[days.findIndex((el) => el === selectedDaySignal.value)]}
                 day={selectedDaySignal.value}
@@ -214,10 +215,7 @@ const MobileTimetable = component$((props: timetableProps) => {
 export default component$(() => {
   const startOfWeek = dayjs(new Date()).startOf('week').toDate();
   const endOfWeek = dayjs(new Date()).endOf('week').toDate();
-  
-  // Zacasna funkcija za prikaz
-  // To bo treba itak fetchati iz backenda/karkoli bo ze, teden za tednom.
-  // Druga opcija je da imamo na voljo samo en teden in je dinamicen urnik sporočen pravočasno
+
   function getSelectedWeekTimetable(fullTimetable: Timetable, weekStart: Date, weekEnd: Date): Timetable {
     return {
       subjects: fullTimetable.subjects.map((subject) => {
