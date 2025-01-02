@@ -113,12 +113,12 @@ const DesktopTimetable = component$((props: timetableProps) => {
 
   return (
     <div class="flex flex-row w-full">
-      <div class="flex flex-col sticky left-0 z-20 bg-white dark:bg-black">
+      <div class="flex flex-col sticky left-0 z-20 border-r border-gray-800 dark:border-gray-200 bg-white dark:bg-black">
         <div class="py-4 border-b border-gray-800 dark:border-gray-200">
           <br />
         </div>
         {hours.map((hour) => (
-          <div key={hour} class="flex h-16 pl-2 border-b border-gray-300 dark:border-gray-600">
+          <div key={hour} class="flex h-16 px-2 border-b border-gray-300 dark:border-gray-600">
             <div class="text-right">
               {`${dayjs().hour(hour).format("HH")}:00`}
             </div>
@@ -128,8 +128,9 @@ const DesktopTimetable = component$((props: timetableProps) => {
 
       {days.map((day, index) => {
         const dayGroupings = props.daysData[index];
+        const borderClasses = (index != days.length - 1) ? ` border-r border-gray-800 dark:border-gray-200` : "";
         return (
-          <div key={day} class="flex flex-col w-[20%] min-w-max border-l border-gray-800 dark:border-gray-200">
+          <div key={day} class={`flex flex-col w-[20%] min-w-max` + borderClasses}>
             <div class="flex flex-row py-4 font-bold text-center border-b border-gray-600 dark:border-gray-200">
               <div class="flex flex-col w-full">{day}</div>
             </div>
@@ -166,7 +167,7 @@ const MobileTimetable = component$((props: timetableProps) => {
   return (
     <>
       <div class="flex flex-row">
-        <div class="flex flex-col sticky left-0 z-20 bg-white dark:bg-black">
+        <div class="flex flex-col sticky left-0 z-20 border-r border-gray-800 dark:border-gray-200 bg-white dark:bg-black">
           <div class="py-4 border-y border-gray-800 dark:border-gray-200">
             <br />
           </div>
@@ -182,7 +183,7 @@ const MobileTimetable = component$((props: timetableProps) => {
           ))}
         </div>
 
-        <div class="flex flex-col w-full border border-gray-800 dark:border-gray-200 overflow-x-scroll">
+        <div class="flex flex-col w-full border border-l-0 border-gray-800 dark:border-gray-200 overflow-x-scroll">
           <div class="left-0 z-20"
           style={{
             position: stickyPositionSignal.value as unknown as undefined
