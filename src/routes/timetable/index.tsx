@@ -113,7 +113,7 @@ const DesktopTimetable = component$((props: timetableProps) => {
 
   return (
     <div class="flex flex-row w-full">
-      <div class="flex flex-col sticky left-0 z-20 border-r border-gray-800 dark:border-gray-200 bg-white dark:bg-black">
+      <div class="flex flex-col sticky left-0 z-30 border-r border-gray-800 dark:border-gray-200 bg-white dark:bg-black">
         <div class="py-4 border-b border-gray-800 dark:border-gray-200">
           <br />
         </div>
@@ -131,7 +131,7 @@ const DesktopTimetable = component$((props: timetableProps) => {
         const borderClasses = (index != days.length - 1) ? ` border-r border-gray-800 dark:border-gray-200` : "";
         return (
           <div key={day} class={`flex flex-col w-[20%] min-w-max` + borderClasses}>
-            <div class="flex flex-row py-4 font-bold text-center border-b border-gray-600 dark:border-gray-200">
+            <div class="flex flex-row sticky top-0 z-20 py-4 font-bold text-center border-b border-gray-600 dark:border-gray-200 bg-white dark:bg-black">
               <div class="flex flex-col w-full">{day}</div>
             </div>
 
