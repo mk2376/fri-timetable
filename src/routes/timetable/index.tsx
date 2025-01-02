@@ -174,7 +174,7 @@ const MobileTimetable = component$((props: timetableProps) => {
           {hours.map((hour) => (
             <div
               key={hour}
-              class="flex h-16 pl-2 border-b border-gray-300 dark:border-gray-600"
+              class="flex h-16 px-2 border-b border-gray-300 dark:border-gray-600"
             >
               <div class="text-right">
                 {`${dayjs().hour(hour).format('HH')}:00`}
