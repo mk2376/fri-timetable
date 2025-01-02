@@ -55,8 +55,9 @@
     "clsx": "^2.1.1"
   },
   "dependencies": {
+    "dayjs": "^1.11.13",
     "decode-formdata": "^0.8.0",
-    "valibot": "^1.0.0-beta.9",
-    "dayjs": "^1.11.13"
+    "react-sticky-el": "^2.1.1",
+    "valibot": "^1.0.0-beta.9"
   }
 }
