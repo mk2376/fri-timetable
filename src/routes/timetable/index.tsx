@@ -113,7 +113,7 @@ const DesktopTimetable = component$((props: timetableProps) => {
 
   return (
     <div class="flex flex-row w-full">
-      <div class="flex flex-col sticky left-0 z-50 bg-white dark:bg-black">
+      <div class="flex flex-col sticky left-0 z-20 bg-white dark:bg-black">
         <div class="py-4 border-b border-gray-800 dark:border-gray-200">
           <br />
         </div>
@@ -166,7 +166,7 @@ const MobileTimetable = component$((props: timetableProps) => {
   return (
     <>
       <div class="flex flex-row">
-        <div class="flex flex-col sticky left-0 z-50 bg-white dark:bg-black">
+        <div class="flex flex-col sticky left-0 z-20 bg-white dark:bg-black">
           <div class="py-4 border-y border-gray-800 dark:border-gray-200">
             <br />
           </div>
@@ -183,7 +183,7 @@ const MobileTimetable = component$((props: timetableProps) => {
         </div>
 
         <div class="flex flex-col w-full border border-gray-800 dark:border-gray-200 overflow-x-scroll">
-          <div class="left-0 z-50"
+          <div class="left-0 z-20"
           style={{
             position: stickyPositionSignal.value as unknown as undefined
           }}
