@@ -61,7 +61,7 @@ const TimetableColumn = component$((props: timetableColumnProps) => {
                                 class="flex flex-col w-full h-full dark:text-black /* white does not provide enough contrast */ rounded-lg p-1 z-10 m-1 overflow-hidden text-pretty"
                                 style={{
                                   backgroundColor: `${activity.color}`,
-                                  height: `${dayjs(activity.dateTo).diff(dayjs(activity.dateFrom), "hour") * 3.7}rem`,
+                                  height: `${dayjs(activity?.dateTo).diff(dayjs(activity?.dateFrom), "hour") * 4 - 0.6}rem`,
                                 }}
                               >
                                 <div class="font-bold mb-1">
