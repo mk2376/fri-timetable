@@ -9,7 +9,7 @@ export default component$(() => {
   const GithubLogo = mode.isDarkTheme.value ? GithubLogoDark : GithubLogoLight;
 
   return (      
-    <footer class="fixed bottom-0 w-full shadow-lg mx-auto px-4 py-4 invisible md:visible">      
+    <footer class="fixed bottom-0 w-full z-20 shadow-lg mx-auto px-4 py-4 invisible md:visible">      
       <div class="flex justify-center items-center text-center text-sm">    
         <div class="flex items-center gap-1 p-2 backdrop-blur-sm w-fit">  
           <span>Made with <span class="text-primary">♥</span> for <a href="https://fri.uni-lj.si/en" target="_blank">FRI</a> © {new Date().getFullYear()}</span>  
