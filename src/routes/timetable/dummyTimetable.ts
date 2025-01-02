@@ -231,7 +231,7 @@ export const data2 = {
           {
               activityType: "LV",
               location: "PR17",
-              teacher: ["Luka Čehovin Zajc"],
+              teacher: ["Luka Čehovin Zajc", "test1", "test2"],
               day: "PET",
               hourStart: 15,
               hourEnd: 17
