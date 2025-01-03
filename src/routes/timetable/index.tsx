@@ -1,4 +1,4 @@
-import { component$, useSignal, useContext, useVisibleTask$, useTask$ } from '@builder.io/qwik';
+import { component$, useSignal, useContext, useVisibleTask$} from '@builder.io/qwik';
 import { qwikify$ } from '@builder.io/qwik-react';
 import type { Timetable, Activity } from '../../models/Timetable'
 import { dummyTimetable } from './dummyTimetable'; // Temporary data
@@ -55,7 +55,7 @@ function maxHourOfNonEmptyActivityGroup(activityGroup: activityGroup[], defaultS
 }
 
 function clipFinalActivityHourOfActivityGroup(activityGroup: activityGroup[], clipToHour: number, clipOnlyEmpty: boolean = true) {
-  let finalActivity = activityGroup[activityGroup.length - 1];
+  const finalActivity = activityGroup[activityGroup.length - 1];
   
   if(clipOnlyEmpty && finalActivity.activities.length !== 0) {
     return;
@@ -138,7 +138,7 @@ const DesktopTimetable = component$((props: timetableProps) => {
   const days = props.possibleDays;
   
   const maxHourOfAllDays = props.daysData.reduce((acc, day) => {
-    let maxHourOfDay = maxHourOfNonEmptyActivityGroup(day, props.defaultStartHour);
+    const maxHourOfDay = maxHourOfNonEmptyActivityGroup(day, props.defaultStartHour);
     if (maxHourOfDay > acc) {
       return maxHourOfDay;
     }
