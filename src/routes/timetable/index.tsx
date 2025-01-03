@@ -91,7 +91,7 @@ const TimetableColumn = component$((props: timetableColumnProps) => {
                               class="flex flex-row w-full h-16 border-b border-gray-300 dark:border-gray-600 relative"
                             >
                               <div
-                                class="flex flex-col w-full min-w-max dark:text-black /* white does not provide enough contrast */ rounded-lg p-1 m-1 break-words text-balance"
+                                class="flex flex-col w-full min-w-max dark:text-black /* white does not provide enough contrast */ rounded-lg z-10 p-1 m-1 break-words text-balance"
                                 style={{
                                   backgroundColor: `${activity.color}`,
                                   height: `${dayjs(activity.dateTo).diff(dayjs(activity.dateFrom), "hour") * 4 - 0.6}rem`,
