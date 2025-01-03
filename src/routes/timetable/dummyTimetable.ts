@@ -517,4 +517,4 @@ function transformTimes(data: any): Timetable {
     };
   }
 
-export const dummyTimetable = transformTimes(data2);
+export const dummyTimetable = transformTimes(data);
