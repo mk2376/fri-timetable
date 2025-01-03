@@ -67,14 +67,14 @@ export const data = {
             },
             color: "rgba(165, 233, 221, 0.7)",
             activities: [
-              /*{
+              {
                 activityType: "P",
                 location: "P01",
                 teacher: ["Zoran Bosnić"],
                 day: "SRE",
                 hourStart: 7,
                 hourEnd: 10
-              },*/
+              },
               {
                 activityType: "LV",
                 location: "PR06",

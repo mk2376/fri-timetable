@@ -153,7 +153,7 @@ const DesktopTimetable = component$((props: timetableProps) => {
   useVisibleTask$(() => document.body.classList.add("overflow-x-auto"))
 
   return (
-    <div class="flex flex-row w-full">
+    <div class="flex flex-row w-full border-b border-gray-800 dark:border-gray-200">
       <div class="flex flex-col sticky left-0 z-30 border-r border-gray-800 dark:border-gray-200 bg-white dark:bg-black">
         <div class="py-4 border-b border-gray-800 dark:border-gray-200">
           <br />
@@ -214,7 +214,7 @@ const MobileTimetable = component$((props: timetableProps) => {
 
   return (
     <>
-      <div class="flex flex-row">
+      <div class="flex flex-row border-b border-gray-800 dark:border-gray-200">
         <div class="flex flex-col sticky left-0 z-20 border-r border-gray-800 dark:border-gray-200 bg-white dark:bg-black">
           <div class="py-4 border-y border-gray-800 dark:border-gray-200">
             <br />
@@ -231,7 +231,7 @@ const MobileTimetable = component$((props: timetableProps) => {
           ))}
         </div>
 
-        <div class="flex flex-col w-full border border-l-0 border-gray-800 dark:border-gray-200 overflow-x-auto">
+        <div class="flex flex-col w-full border-t border-r border-gray-800 dark:border-gray-200 overflow-x-auto">
           <div class="left-0 z-20"
           style={{
             position: stickyPositionSignal.value as unknown as undefined
