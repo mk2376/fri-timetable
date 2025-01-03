@@ -61,7 +61,7 @@ const TimetableColumn = component$((props: timetableColumnProps) => {
                               class="flex flex-row w-full h-16 border-b border-gray-300 dark:border-gray-600 relative"
                             >
                               <div
-                                class="flex flex-col w-full min-w-max dark:text-black /* white does not provide enough contrast */ rounded-lg p-1 z-10 m-1 break-words overflow-hidden text-balance"
+                                class="flex flex-col w-full min-w-max dark:text-black /* white does not provide enough contrast */ rounded-lg p-1 m-1 break-words text-balance"
                                 style={{
                                   backgroundColor: `${activity.color}`,
                                   height: `${dayjs(activity.dateTo).diff(dayjs(activity.dateFrom), "hour") * 4 - 0.6}rem`,
@@ -109,7 +109,7 @@ const DesktopTimetable = component$((props: timetableProps) => {
   const hours = Array.from({ length: 15 }, (_, i) => i + 7);
 
   // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(() => document.body.classList.add("overflow-x-scroll"))
+  useVisibleTask$(() => document.body.classList.add("overflow-x-auto"))
 
   return (
     <div class="flex flex-row w-full">
@@ -183,7 +183,7 @@ const MobileTimetable = component$((props: timetableProps) => {
           ))}
         </div>
 
-        <div class="flex flex-col w-full border border-l-0 border-gray-800 dark:border-gray-200 overflow-x-scroll">
+        <div class="flex flex-col w-full border border-l-0 border-gray-800 dark:border-gray-200 overflow-x-auto">
           <div class="left-0 z-20"
           style={{
             position: stickyPositionSignal.value as unknown as undefined
