@@ -1,9 +1,9 @@
-import { component$, useSignal, useContext, useVisibleTask$ } from '@builder.io/qwik';
+import { component$, useSignal, useContext, useVisibleTask$} from '@builder.io/qwik';
 import { qwikify$ } from '@builder.io/qwik-react';
 import type { Timetable, Activity } from '../../models/Timetable'
 import { dummyTimetable } from './dummyTimetable'; // Temporary data
 import dayjs from "../../lib/dayjsConfig"
-import { type Dayjs } from 'dayjs';
+import { Dayjs } from 'dayjs';
 import { Platform } from '~/lib/state/platform';
 import Sticky from 'react-sticky-el';
 import { Mode } from '~/lib/state/mode';
@@ -12,13 +12,15 @@ const QSticky = qwikify$(Sticky)
 
 type timetableProps = {
   daysData: activityGroup[][],
-  possibleDays: string[]
+  possibleDays: string[],
+  defaultStartHour: number,
+  defaultEndHour: number,
 }
 
 type timetableColumnProps = {
   dayData: activityGroup[],
   day: string,
-  dayIndex: number
+  dayIndex: number,
 }
 
 type activityGroup = {
@@ -34,9 +36,37 @@ interface ActivityDisplay extends Activity {
   shortName: string,
 }
 
+function maxHourOfNonEmptyActivityGroup(activityGroup: activityGroup[], defaultStartHour: number) {
+  let maxHour = defaultStartHour;
+  for(let i = 0; i < activityGroup.length; i++) {
+    if (i == 0) {
+      maxHour = dayjs(activityGroup[i].end).hour()
+      continue;
+    }
+    if (activityGroup[i].activities.length === 0) {
+      continue;
+    }
+    const currentActivityGroupHour = dayjs(activityGroup[i].end).hour();
+    if (currentActivityGroupHour > maxHour) {
+      maxHour = currentActivityGroupHour;
+    }
+  }
+  return maxHour;
+}
+
+function clipFinalActivityHourOfActivityGroup(activityGroup: activityGroup[], clipToHour: number, clipOnlyEmpty: boolean = true) {
+  const finalActivity = activityGroup[activityGroup.length - 1];
+  
+  if(clipOnlyEmpty && finalActivity.activities.length !== 0) {
+    return;
+  }
+
+  finalActivity.end = dayjs(finalActivity.end).hour(clipToHour).toDate();
+}
 
 const TimetableColumn = component$((props: timetableColumnProps) => {
-  const day = props.day
+
+  const day = props.day;
   return (
     <>
     {
@@ -61,7 +91,7 @@ const TimetableColumn = component$((props: timetableColumnProps) => {
                               class="flex flex-row w-full h-16 border-b border-gray-300 dark:border-gray-600 relative"
                             >
                               <div
-                                class="flex flex-col w-full min-w-max dark:text-black /* white does not provide enough contrast */ rounded-lg p-1 z-10 m-1 break-words overflow-hidden text-balance"
+                                class="flex flex-col w-full min-w-max dark:text-black /* white does not provide enough contrast */ rounded-lg z-10 p-1 m-1 break-words text-balance"
                                 style={{
                                   backgroundColor: `${activity.color}`,
                                   height: `${dayjs(activity.dateTo).diff(dayjs(activity.dateFrom), "hour") * 4 - 0.6}rem`,
@@ -106,19 +136,30 @@ const TimetableColumn = component$((props: timetableColumnProps) => {
 
 const DesktopTimetable = component$((props: timetableProps) => {
   const days = props.possibleDays;
-  const hours = Array.from({ length: 15 }, (_, i) => i + 7);
+  
+  const maxHourOfAllDays = props.daysData.reduce((acc, day) => {
+    const maxHourOfDay = maxHourOfNonEmptyActivityGroup(day, props.defaultStartHour);
+    if (maxHourOfDay > acc) {
+      return maxHourOfDay;
+    }
+    return acc;
+  }, props.defaultStartHour);
+
+  props.daysData.forEach((day) => clipFinalActivityHourOfActivityGroup(day, maxHourOfAllDays + 1));
+
+  const hours = Array.from({ length: maxHourOfAllDays - props.defaultStartHour + 1}, (_, i) => i + props.defaultStartHour);
 
   // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(() => document.body.classList.add("overflow-x-scroll"))
+  useVisibleTask$(() => document.body.classList.add("overflow-x-auto"))
 
   return (
-    <div class="flex flex-row w-full">
-      <div class="flex flex-col sticky left-0 z-50 bg-white dark:bg-black">
+    <div class="flex flex-row w-full border-b border-gray-800 dark:border-gray-200">
+      <div class="flex flex-col sticky left-0 z-30 border-r border-gray-800 dark:border-gray-200 bg-white dark:bg-black">
         <div class="py-4 border-b border-gray-800 dark:border-gray-200">
           <br />
         </div>
         {hours.map((hour) => (
-          <div key={hour} class="flex h-16 pl-2 border-b border-gray-300 dark:border-gray-600">
+          <div key={hour} class="flex h-16 px-2 border-b border-gray-300 dark:border-gray-600">
             <div class="text-right">
               {`${dayjs().hour(hour).format("HH")}:00`}
             </div>
@@ -128,9 +169,10 @@ const DesktopTimetable = component$((props: timetableProps) => {
 
       {days.map((day, index) => {
         const dayGroupings = props.daysData[index];
+        const borderClasses = (index != days.length - 1) ? ` border-r border-gray-800 dark:border-gray-200` : "";
         return (
-          <div key={day} class="flex flex-col w-[20%] min-w-max border-l border-gray-800 dark:border-gray-200">
-            <div class="flex flex-row py-4 font-bold text-center border-b border-gray-600 dark:border-gray-200">
+          <div key={day} class={`flex flex-col w-[20%] min-w-max` + borderClasses}>
+            <div class="flex flex-row sticky top-0 z-20 py-4 font-bold text-center border-b border-gray-600 dark:border-gray-200 bg-white dark:bg-black">
               <div class="flex flex-col w-full">{day}</div>
             </div>
 
@@ -156,24 +198,31 @@ const MobileTimetable = component$((props: timetableProps) => {
   // if Sunday (0) or Saturday (6), then set it to be Monday (1), since most people checking over the weekend will probably want to look at Monday.
   if(todayDayIndex == 0 || todayDayIndex == 6)
     todayDayIndex = 1 
-  const selectedDaySignal = useSignal(props.possibleDays[todayDayIndex - 1]);
+  todayDayIndex -= 1;
+
+  const currentDayIxSignal = useSignal(todayDayIndex);
   const days = props.possibleDays;
   const daysShort = ["PON", "TOR", "SRE", "ČET", "PET"];
-  const hours = Array.from({ length: 15 }, (_, i) => i + 7);
-  
+
+  const maxHourPerDay: number[] = props.daysData.map((day) => maxHourOfNonEmptyActivityGroup(day, props.defaultStartHour));
+
+  props.daysData.forEach((day, ix) => clipFinalActivityHourOfActivityGroup(day, Math.min(maxHourPerDay[ix] + 1, props.defaultEndHour)));
+
+  const hours = Array.from({ length: maxHourPerDay[currentDayIxSignal.value] - props.defaultStartHour + 1}, (_, i) => i + props.defaultStartHour);
+
   const stickyPositionSignal = useSignal("sticky");
 
   return (
     <>
-      <div class="flex flex-row">
-        <div class="flex flex-col sticky left-0 z-50 bg-white dark:bg-black">
+      <div class="flex flex-row border-b border-gray-800 dark:border-gray-200">
+        <div class="flex flex-col sticky left-0 z-20 border-r border-gray-800 dark:border-gray-200 bg-white dark:bg-black">
           <div class="py-4 border-y border-gray-800 dark:border-gray-200">
             <br />
           </div>
           {hours.map((hour) => (
             <div
               key={hour}
-              class="flex h-16 pl-2 border-b border-gray-300 dark:border-gray-600"
+              class="flex h-16 px-2 border-b border-gray-300 dark:border-gray-600"
             >
               <div class="text-right">
                 {`${dayjs().hour(hour).format('HH')}:00`}
@@ -182,8 +231,8 @@ const MobileTimetable = component$((props: timetableProps) => {
           ))}
         </div>
 
-        <div class="flex flex-col w-full border border-gray-800 dark:border-gray-200 overflow-x-scroll">
-          <div class="left-0 z-50"
+        <div class="flex flex-col w-full border-t border-r border-gray-800 dark:border-gray-200 overflow-x-auto">
+          <div class="left-0 z-20"
           style={{
             position: stickyPositionSignal.value as unknown as undefined
           }}
@@ -194,18 +243,18 @@ const MobileTimetable = component$((props: timetableProps) => {
                   <div
                     key={index}
                     class={`flex flex-col justify-center items-center w-full py-4 cursor-pointer transition-all relative ${
-                      selectedDaySignal.value === days[index]
+                      currentDayIxSignal.value === index
                         ? 'font-bold w-1/3'
                         : 'text-gray-500 w-1/4'
                     }`}
-                    onClick$={() => (selectedDaySignal.value = days[index])}
+                    onClick$={() => (currentDayIxSignal.value = index)}
                   >
 
                     <span>{day}</span>
 
                     <div
                       class={`absolute bottom-0 left-0 h-1 w-full transition-all duration-300 ${
-                        selectedDaySignal.value === days[index] ? 'bg-primary' : 'bg-transparent'
+                        currentDayIxSignal.value === index ? 'bg-primary' : 'bg-transparent'
                       }`}
                     />
                   </div>
@@ -217,9 +266,9 @@ const MobileTimetable = component$((props: timetableProps) => {
           <div class="flex flex-row w-full min-w-max">
             <div class="flex flex-col w-full min-w-max">
               <TimetableColumn
-                dayData={props.daysData[days.findIndex((el) => el === selectedDaySignal.value)]}
-                day={selectedDaySignal.value}
-                dayIndex={days.findIndex((el) => el === selectedDaySignal.value)}
+                dayData={props.daysData[currentDayIxSignal.value]}
+                day={days[currentDayIxSignal.value]}
+                dayIndex={currentDayIxSignal.value}
               />
             </div>
           </div>
@@ -234,6 +283,9 @@ export default component$(() => {
   const startOfWeek = dayjs(new Date()).startOf('week').toDate();
   const endOfWeek = dayjs(new Date()).endOf('week').toDate();
   const isDarkMode = useContext(Mode);
+
+  const defaultStartHour = 7;
+  const defaultEndHour = 21;
 
   function rgbaToHsv(r: number, g: number, b: number, a = 1) {
     r /= 255;
@@ -330,7 +382,7 @@ export default component$(() => {
 
   const timetable = changeActivitiesColorForDarkMode(isDarkMode.isDarkTheme.value ? true : false, getSelectedWeekTimetable(dummyTimetable, startOfWeek, endOfWeek))
 
-  function groupByHourOverlap(day: Dayjs) {
+  function groupByHourOverlap(day: Dayjs, defaultStartHour: number, defaultEndHour: number) {
     const groupedActivities: activityGroup[] = [];
     timetable.subjects.forEach((subject) => {
       subject.activities.forEach((activity) => {
@@ -381,8 +433,8 @@ export default component$(() => {
     groupedActivities.sort((a, b) => dayjs(a.start).diff(dayjs(b.start)));
 
     const completeGroups: activityGroup[] = [];
-    let currentTime = day.hour(7); 
-    const endTime = day.hour(21); 
+    let currentTime = day.hour(defaultStartHour); 
+    const endTime = day.hour(defaultEndHour);
 
     for (const group of groupedActivities) {
         if (dayjs(group.start).isAfter(currentTime)) {
@@ -412,23 +464,21 @@ export default component$(() => {
   function getScheduleGroupingForEachDay(startOfWeek: Date) {
     const groupingPerDay: activityGroup[][] = [];
     for(let i = 2; i < 7; i++) {
-      groupingPerDay.push(groupByHourOverlap(dayjs(startOfWeek).day(i)));
+      groupingPerDay.push(groupByHourOverlap(dayjs(startOfWeek).day(i), defaultStartHour, defaultEndHour));
     }
     return groupingPerDay;
   }
 
-
   const dayScheduleGroup = getScheduleGroupingForEachDay(startOfWeek);
-  const days = ["Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek"]
-
-  const platform = useContext(Platform)
+  const days = ["Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek"];
+  const platform = useContext(Platform);
 
   return (
     <>
       {platform.isMobile.value ? (
-        <MobileTimetable daysData={dayScheduleGroup} possibleDays={days}/>
+        <MobileTimetable daysData={dayScheduleGroup} possibleDays={days} defaultStartHour={defaultStartHour} defaultEndHour={defaultEndHour} />
       ) : (
-        <DesktopTimetable daysData={dayScheduleGroup} possibleDays={days}/>
+        <DesktopTimetable daysData={dayScheduleGroup} possibleDays={days} defaultStartHour={defaultStartHour} defaultEndHour={defaultEndHour}/>
       )}
     </>
   );
