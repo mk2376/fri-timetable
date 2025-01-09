@@ -42,12 +42,13 @@ go-task build
 <br>
 <br>
 
-<div align="left" style="column-gap: 10px; display: flex;">
-  <div align="center" style="display: inline-block; width: 45%;">
-    <p>Search:</p>
+<div align="left">
+  <div align="center" style="display: inline-block; width: 45%; margin-right: 5px;">
+    <p>Search</p>
     <img src="assets/front-page-search-black-mode.png" alt="Search Black Mode Desktop">
   </div>
 </div>
+
 
 ---
 
@@ -61,13 +62,13 @@ go-task build
 <br>
 <br>
 
-<div align="left" style="column-gap: 10px; display: flex;">
-  <div align="center" style="display: inline-block; width: 45%;">
+<div align="left">
+  <div align="center" style="display: inline-block; width: 45%; margin-right: 5px;">
     <p>Search</p>
     <img src="assets/front-page-search-black-mode-mobile.png" alt="Search Black Mode Mobile">
   </div>
   <div align="center" style="display: inline-block; width: 45%;">
-    <p>Overflow example:</p>
+    <p>Subjects menu</p>
     <img src="assets/front-page-black-mode-mobile-2.png" alt="Black Mode Mobile 2">
   </div>
 </div>
