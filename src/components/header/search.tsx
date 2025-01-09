@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from '@builder.io/qwik-city';
 import { Search, Cancel } from '../icons/qwik';
 import styles from './search.module.css';
 import ListContainer from '../initial-page/selection-tabs/list-container';
-import { tabDemoContent } from '../initial-page/selection-tabs';
+import { tabDemoContent } from '../initial-page/selection-tabs/data';
 
 export default component$(() => {
   const location = useLocation();

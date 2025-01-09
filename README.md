@@ -1,5 +1,17 @@
 # FRI timetable
 
+## Primary Components
+
+- **Framework**: Built with [Qwik](https://qwik.dev/), with [React](https://react.dev/) integration.
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) and [Tailwind CSS Animate](https://github.com/jamiebuilds/tailwindcss-animate).
+- **Build Tools**: [Vite](https://vite.dev/) and [Bun](https://bun.sh/).
+- **Language**: [TypeScript](https://www.typescriptlang.org/).
+- **Utilities**: [Day.js](https://day.js.org/) (date handling), [Valibot](https://valibot.dev/) (validation), [Qwik LocalStorage](https://github.com/harshmangalam/qwik-localstorage), [Modular Forms](https://modularforms.dev/).
+- **Development Tools**: [ESLint](https://eslint.org/), [Prettier](https://prettier.io/), [PostCSS](https://postcss.org/).
+- **Runtime**: [Bun](https://bun.sh/), [Node.js](https://nodejs.org/).
+
+## Dev
+
 Enter:
 
 ```sh
@@ -9,81 +21,68 @@ devbox shell
 Dev:
 
 ```sh
-bun start
+bun run start
 ```
 
-## Qwik City App ⚡️
+Build using:
 
-- [Qwik Docs](https://qwik.dev/)
-- [Discord](https://qwik.dev/chat)
-- [Qwik GitHub](https://github.com/QwikDev/qwik)
-- [@QwikDev](https://twitter.com/QwikDev)
-- [Vite](https://vitejs.dev/)
+```sh
+go-task build
+```
+
+## Preview
+
+### Front page (Desktop)
+
+<div style="display: flex; gap: 10px;">
+  <img src="assets/front-page-black-mode.png" alt="Black Mode Desktop" width="45%">
+  <img src="assets/front-page-light-mode.png" alt="Light Mode Desktop" width="45%">
+</div>
+
+<br>
+
+Search:
+
+<div style="display: flex; gap: 10px;">
+  <img src="assets/front-page-search-black-mode.png" alt="Search Black Mode Desktop" width="45%">
+</div>
 
 ---
 
-### Project Structure
+### Front page (Mobile)
 
-This project is using Qwik with [QwikCity](https://qwik.dev/qwikcity/overview/). QwikCity is just an extra set of tools on top of Qwik to make it easier to build a full site, including directory-based routing, layouts, and more.
+<div style="display: flex; gap: 10px;">
+  <img src="assets/front-page-black-mode-mobile.png" alt="Black Mode Mobile" width="45%">
+  <img src="assets/front-page-light-mode-mobile.png" alt="Light Mode Mobile" width="45%">
+</div>
 
-Inside your project, you'll see the following directory structure:
+<br>
 
-```
-├── public/
-│   └── ...
-└── src/
-    ├── components/
-    │   └── ...
-    └── routes/
-        └── ...
-```
+<div style="display: flex; gap: 10px;">
+    <div style="width: 45%;">
+        Search:
+        <img src="assets/front-page-search-black-mode-mobile.png" alt="Search Black Mode Mobile">
+    </div>
+    <div style="width: 45%;">
+        Overflow example:
+        <img src="assets/front-page-black-mode-mobile-2.png" alt="Black Mode Mobile 2">
+    </div>
+</div>
 
-- `src/routes`: Provides the directory-based routing, which can include a hierarchy of `layout.tsx` layout files, and an `index.tsx` file as the page. Additionally, `index.ts` files are endpoints. Please see the [routing docs](https://qwik.dev/qwikcity/routing/overview/) for more info.
+---
 
-- `src/components`: Recommended directory for components.
+### Timetable page (Desktop)
 
-- `public`: Any static assets, like images, can be placed in the public directory. Please see the [Vite public directory](https://vitejs.dev/guide/assets.html#the-public-directory) for more info.
+<div style="display: flex; gap: 10px;">
+  <img src="assets/timetable-page-black-mode.png" alt="Timetable Black Mode Desktop" width="45%">
+  <img src="assets/timetable-page-light-mode.png" alt="Timetable Light Mode Desktop" width="45%">
+</div>
 
-### Add Integrations and deployment
+---
 
-Use the `bun qwik add` command to add additional integrations. Some examples of integrations includes: Cloudflare, Netlify or Express Server, and the [Static Site Generator (SSG)](https://qwik.dev/qwikcity/guides/static-site-generation/).
+### Timetable page (Mobile)
 
-```shell
-bun qwik add # or `bun qwik add`
-```
-
-### Development
-
-Development mode uses [Vite's development server](https://vitejs.dev/). The `dev` command will server-side render (SSR) the output during development.
-
-```shell
-npm start # or `bun start`
-```
-
-> Note: during dev mode, Vite may request a significant number of `.js` files. This does not represent a Qwik production build.
-
-### Preview
-
-The preview command will create a production build of the client modules, a production build of `src/entry.preview.tsx`, and run a local server. The preview server is only for convenience to preview a production build locally and should not be used as a production server.
-
-```shell
-bun preview # or `bun preview`
-```
-
-### Production
-
-The production build will generate client and server modules by running both client and server build commands. The build command will use Typescript to run a type check on the source code.
-
-```shell
-bun build # or `bun build`
-```
-
-### Bun Server
-
-This app has a minimal [Bun server](https://bun.sh/docs/api/http) implementation. After running a full build, you can preview the build using the command:
-
-```
-bun run serve
-```
-
-Then visit [http://localhost:3000/](http://localhost:3000/)
+<div style="display: flex; gap: 10px;">
+  <img src="assets/timetable-page-black-mode-mobile.png" alt="Timetable Black Mode Mobile" width="45%">
+  <img src="assets/timetable-page-light-mode-mobile.png" alt="Timetable Light Mode Mobile" width="45%">
+</div>

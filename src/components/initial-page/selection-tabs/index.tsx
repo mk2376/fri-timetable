@@ -4,6 +4,7 @@ import * as Icons from '~/components/icons/qwik';
 import styles from "./index.module.css";  
 import { Platform } from '~/lib/state/platform';
 import ListContainer from './list-container';
+import { tabDemoContent } from './data';
 
 type Tab = {  
   id: string;  
@@ -17,71 +18,9 @@ export type NestedList = {
   children?: NestedList[];  
 };  
 
-type TabContent = {  
+export type TabContent = {  
   [key: string]: NestedList[];  
 };
-
-export const tabDemoContent: TabContent = {  
-    degree: [  
-      { id: '1', label: 'prva stopnja: univerzitetni', children: [  
-        { id: '1-1', label: 'Second Level 1-1' },  
-        { id: '1-2', label: 'Second Level 1-2', children: [  
-          { id: '1-2-1', label: 'Third Level 1-2-1' }  
-        ] }  
-      ] },  
-      { id: '2', label: 'prva stopnja: visokošolski' },
-      { id: '3', label: 'druga stopnja: magisterski' },  
-      { id: '4', label: 'tretja stopnja: doktorski' }  
-    ],  
-    teachers: [  
-      { id: '1', label: 'Bajec, Marko' },  
-      { id: '2', label: 'Batagelj, Borut' },  
-      { id: '3', label: 'Bohak, Ciril' },  
-      { id: '4', label: 'Emeršič, Žiga' },  
-      { id: '5', label: 'Demšar, Janez' },  
-    ],  
-    classrooms: [  
-      { id: '1', label: 'P01' },  
-      { id: '2', label: 'P02' },  
-      { id: '3', label: 'P03' },  
-      { id: '4', label: 'P04' },  
-      { id: '5', label: 'P05' },  
-      { id: '6', label: 'P06' },  
-      { id: '7', label: 'P07' },  
-      { id: '8', label: 'P08' },  
-      { id: '9', label: 'P09' },  
-      { id: '10', label: 'P10' },  
-      { id: '11', label: 'P11' },  
-      { id: '12', label: 'P12' },  
-      { id: '13', label: 'P13' },  
-      { id: '14', label: 'P14' },  
-      { id: '15', label: 'P15' },  
-      { id: '16', label: 'PA' },  
-      { id: '17', label: 'PR05' },  
-      { id: '18', label: 'PR06' },  
-      { id: '19', label: 'PR07' },  
-      { id: '20', label: 'PR08' },  
-      { id: '21', label: 'PR09' },  
-      { id: '22', label: 'PR10' },  
-      { id: '23', label: 'PR11' },  
-    ],  
-    subjects: [  
-      { id: '1', label: 'Algoritmi in podatkovne strukture 1' },  
-      { id: '2', label: 'Človeški vidiki varnosti' },  
-      { id: '3', label: 'Digitalno vezje' },  
-      { id: '4', label: 'Digitalno načrtovanje' },  
-      { id: '5', label: 'Diskratne strukture' },  
-      { id: '6', label: 'Ekonomika in podjetništvo' },  
-      { id: '7', label: 'Grafično oblikovanje' },  
-      { id: '8', label: 'Elektronsko poslovanje' },  
-      { id: '9', label: 'Fizika' },  
-      { id: '10', label: 'Inteligentni sistemi' },  
-      { id: '11', label: 'Zmogljivi sistemi' },  
-      { id: '12', label: 'AI sistemi' },  
-      { id: '13', label: 'FRI sistemi' },  
-      { id: '14', label: 'Programiranje 1' },  
-    ]  
-  };  
 
 export default component$(() => {  
   const location = useLocation(); // Get the current URL and query parameters  
