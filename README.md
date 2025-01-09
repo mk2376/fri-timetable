@@ -40,11 +40,13 @@ go-task build
 </div>
 
 <br>
+<br>
 
-Search:
-
-<div style="display: flex; gap: 10px;">
-  <img src="assets/front-page-search-black-mode.png" alt="Search Black Mode Desktop" width="45%">
+<div align="left" style="column-gap: 10px; display: flex;">
+  <div align="center" style="display: inline-block; width: 45%;">
+    <p>Search:</p>
+    <img src="assets/front-page-search-black-mode.png" alt="Search Black Mode Desktop">
+  </div>
 </div>
 
 ---
@@ -57,16 +59,17 @@ Search:
 </div>
 
 <br>
+<br>
 
-<div style="display: flex; gap: 10px;">
-    <div style="width: 45%;">
-        Search:
-        <img src="assets/front-page-search-black-mode-mobile.png" alt="Search Black Mode Mobile">
-    </div>
-    <div style="width: 45%;">
-        Overflow example:
-        <img src="assets/front-page-black-mode-mobile-2.png" alt="Black Mode Mobile 2">
-    </div>
+<div align="left" style="column-gap: 10px; display: flex;">
+  <div align="center" style="display: inline-block; width: 45%;">
+    <p>Search</p>
+    <img src="assets/front-page-search-black-mode-mobile.png" alt="Search Black Mode Mobile">
+  </div>
+  <div align="center" style="display: inline-block; width: 45%;">
+    <p>Overflow example:</p>
+    <img src="assets/front-page-black-mode-mobile-2.png" alt="Black Mode Mobile 2">
+  </div>
 </div>
 
 ---
