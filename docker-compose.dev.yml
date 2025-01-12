@@ -1,0 +1,22 @@
+services:
+  fri-timetable:
+    image: ${REGISTRY_DOMAIN}/fri-timetable:${LABEL}
+    networks:
+      gateway:
+    #ports:
+    #  - 3000:3000 # UI
+    environment:
+      TZ: Europe/Ljubljana
+      ORIGIN: urnik.${PROJECT_DOMAIN}
+    deploy:
+      replicas: 5
+      labels:
+        caddy: "*.${PROJECT_DOMAIN} ${PROJECT_DOMAIN}"
+        caddy.@fri-timetable: host urnik.${PROJECT_DOMAIN}
+        caddy.handle: "@fri-timetable"
+        caddy.handle.import: reverse-proxy fri-timetable:3000 *
+
+networks:
+  gateway:
+    name: gateway_${ENV}
+    external: true
