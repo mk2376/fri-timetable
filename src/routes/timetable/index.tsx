@@ -7,6 +7,18 @@ import { type Dayjs } from 'dayjs';
 import { Platform } from '~/lib/state/platform';
 import Sticky from 'react-sticky-el';
 import { Mode } from '~/lib/state/mode';
+import { type DocumentHead } from '@builder.io/qwik-city';
+
+export const head: DocumentHead = {
+  title: "FRI timetable",
+  meta: [
+    {
+      name: "description",
+      content: "FRI timetable for selected activity",
+    },
+  ],
+};
+
 
 const QSticky = qwikify$(Sticky)
 

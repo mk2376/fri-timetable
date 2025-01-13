@@ -20,7 +20,7 @@ COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
 
 ENV NODE_ENV=production
-ENV ORIGIN=localhost:3000
+ENV ORIGIN=http://localhost:3000
 
 # Build the application (modified build command)
 RUN bun run build

@@ -7,7 +7,7 @@ services:
     #  - 3000:3000 # UI
     environment:
       TZ: Europe/Ljubljana
-      ORIGIN: urnik.${PROJECT_DOMAIN}
+      ORIGIN: https://urnik.${PROJECT_DOMAIN}
     deploy:
       replicas: 5
       labels:

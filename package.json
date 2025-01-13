@@ -15,7 +15,7 @@
     "build": "qwik build",
     "build.client": "vite build",
     "build.preview": "vite build --ssr src/entry.preview.tsx",
-    "build.server": "vite build -c adapters/bun/vite.config.ts",
+    "build.server": "vite build -c adapters/fastify/vite.config.ts",
     "build.types": "tsc --incremental --noEmit",
     "deploy": "echo 'Run \"npm run qwik add\" to install a server adapter'",
     "dev": "vite --mode ssr",
@@ -24,7 +24,7 @@
     "fmt.check": "prettier --check .",
     "lint": "eslint \"src/**/*.ts*\"",
     "preview": "qwik build preview && vite preview --open",
-    "serve": "bun server/entry.bun.js",
+    "serve": "node server/entry.fastify",
     "start": "vite --open --mode ssr",
     "qwik": "qwik"
   },
@@ -55,13 +55,18 @@
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "5.4.5",
-    "undici": "^7.1.1",
     "vite": "5.3.5",
     "vite-tsconfig-paths": "^4.3.2"
   },
   "dependencies": {
+    "@fastify/compress": "^6.2.1",
+    "@fastify/static": "^6.10.1",
+    "dotenv": "^16.4.7",
+    "undici": "^7.1.1",
     "dayjs": "^1.11.13",
     "decode-formdata": "^0.8.0",
+    "fastify": "^4.17.0",
+    "fastify-plugin": "^4.5.0",
     "react-sticky-el": "^2.1.1",
     "valibot": "^1.0.0-beta.9"
   }

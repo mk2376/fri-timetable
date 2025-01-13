@@ -1,10 +1,10 @@
-.searchOverlay {
-  visibility: hidden;
+.no-animation {
+  animation: none !important;
+  transition: none !important;
 }
 
 .searchOverlayEnter {
   animation: fadeIn 0.2s ease-out forwards;
-  visibility: visible;
 }
 
 .searchOverlayExit {
@@ -24,11 +24,9 @@
 @keyframes fadeOut {
   from {
     opacity: 1;
-    visibility: visible;
   }
 
   to {
     opacity: 0;
-    visibility: hidden;
   }
 }

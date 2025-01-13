@@ -6,4 +6,4 @@ services:
       - 3000:3000 # UI
     environment:
       TZ: Europe/Ljubljana
-      ORIGIN: localhost:3000
+      ORIGIN: http://localhost:3000
