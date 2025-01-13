@@ -1,14 +1,14 @@
 import { $, useVisibleTask$, createContextId, type QRL, type Signal, useContextProvider } from '@builder.io/qwik';
 import { useLocalStorage } from 'qwik-localstorage';
   
-function useIsDarkMode() {
-  const { data, set } = useLocalStorage<boolean>("isDarkMode", true);
+function useIsLightMode() {
+  const { data, set } = useLocalStorage<boolean>("isLightMode", false);
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ track }) => {
     track(() => data.value);
-    document.body.classList.replace(data.value ? 'light': 'dark', data.value ? 'dark': 'light')
-    console.log("isDarkMode", data.value)
+    document.body.classList.replace(data.value ? 'dark': 'light', data.value ? 'light': 'dark')
+    console.log("isLightMode", data.value)
   })
 
   const switchMode = $(() => {
@@ -19,12 +19,12 @@ function useIsDarkMode() {
     set(mode)
   });
 
-  return { isDarkMode: data, switchMode, setMode }
+  return { isLightMode: data, switchMode, setMode }
 }
 
-export const Mode = createContextId<{ isDarkTheme: Signal<boolean | null>, switchMode: QRL<() => void> }>('mode');
+export const Mode = createContextId<{ isLightTheme: Signal<boolean | null>, switchMode: QRL<() => void> }>('mode');
 
 export function InitModeContext() {
-  const { isDarkMode, switchMode } = useIsDarkMode()
-  useContextProvider(Mode, { isDarkTheme: isDarkMode, switchMode: switchMode });
+  const { isLightMode: isLightMode, switchMode } = useIsLightMode()
+  useContextProvider(Mode, { isLightTheme: isLightMode, switchMode: switchMode });
 }

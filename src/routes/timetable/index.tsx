@@ -3,7 +3,7 @@ import { qwikify$ } from '@builder.io/qwik-react';
 import type { Timetable, Activity } from '../../models/Timetable'
 import { dummyTimetable } from './dummyTimetable'; // Temporary data
 import dayjs from "../../lib/dayjsConfig"
-import { Dayjs } from 'dayjs';
+import { type Dayjs } from 'dayjs';
 import { Platform } from '~/lib/state/platform';
 import Sticky from 'react-sticky-el';
 import { Mode } from '~/lib/state/mode';
@@ -282,7 +282,7 @@ const MobileTimetable = component$((props: timetableProps) => {
 export default component$(() => {
   const startOfWeek = dayjs(new Date()).startOf('week').toDate();
   const endOfWeek = dayjs(new Date()).endOf('week').toDate();
-  const isDarkMode = useContext(Mode);
+  const mode = useContext(Mode);
 
   const defaultStartHour = 7;
   const defaultEndHour = 21;
@@ -345,8 +345,8 @@ export default component$(() => {
       return `rgba(${r}, ${g}, ${b}, ${a})`;
   }
 
-  function changeActivitiesColorForDarkMode(isDarkMode: boolean, timetable: Timetable): Timetable {
-    if(!isDarkMode)
+  function changeActivitiesColorForDarkMode(isLightTheme: boolean, timetable: Timetable): Timetable {
+    if(isLightTheme)
       return timetable;
     
     for(const subject of timetable.subjects) {
@@ -380,7 +380,7 @@ export default component$(() => {
     };
   }
 
-  const timetable = changeActivitiesColorForDarkMode(isDarkMode.isDarkTheme.value ? true : false, getSelectedWeekTimetable(dummyTimetable, startOfWeek, endOfWeek))
+  const timetable = changeActivitiesColorForDarkMode(mode.isLightTheme.value ? true : false, getSelectedWeekTimetable(dummyTimetable, startOfWeek, endOfWeek))
 
   function groupByHourOverlap(day: Dayjs, defaultStartHour: number, defaultEndHour: number) {
     const groupedActivities: activityGroup[] = [];

@@ -13,7 +13,7 @@ export default component$(() => {
     <nav>
       <header class="h-16 md:h-24 flex justify-between items-center pr-2 md:pr-6 gap-2 md:gap-6">
         <Link href="/" class="h-full max-w-fit" aria-label="Home">
-          {mode.isDarkTheme.value ? (
+          {!mode.isLightTheme.value ? (
             <LogoDark
               class="p-2 md:p-4 h-full max-w-fit backdrop-blur-sm rounded-br-xl"
               alt="FRI logo"

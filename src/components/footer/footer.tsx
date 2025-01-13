@@ -6,7 +6,7 @@ import GithubLogoDark from "~/media/github-mark-white.svg";
 export default component$(() => {    
   const mode = useContext(Mode);    
   
-  const GithubLogo = mode.isDarkTheme.value ? GithubLogoDark : GithubLogoLight;
+  const GithubLogo = mode.isLightTheme.value ? GithubLogoLight: GithubLogoDark;
 
   return (      
     <footer class="fixed bottom-0 w-full shadow-lg mx-auto px-4 py-4 z-20 invisible md:visible">      

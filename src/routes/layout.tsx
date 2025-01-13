@@ -27,11 +27,13 @@ export const useServerTimeLoader = routeLoader$(() => {
 });
 
 export default component$(() => {
+  // This has to be initialized in parent
+  InitModeContext()
+
   useStyles$(styles);
 
   // This has to be initialized in parent
   InitPlatformContext()
-  InitModeContext()
 
   return (
     <div class="flex flex-col min-h-screen">
