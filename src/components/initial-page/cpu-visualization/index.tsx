@@ -12,13 +12,31 @@ function useCPUVisualization({
   const containerRef = useSignal<HTMLDivElement>();            
   const mousePos = useStore({ x: 0, y: 0 });        
   const cpuCenter = useStore({ x: 0, y: 0 });        
+  const dimensions = useStore({ width: 0, height: 0 });
 
   const platform = useContext(Platform) 
-  
   const resizeTimeout = useSignal<number | null>(null);
 
+  const getScaleFactors = $(() => {
+    const baseWidth = 2560; // Base width for 2K resolution
+    const baseHeight = 1440; // Base height for 2K resolution
+    
+    const widthScale = dimensions.width / baseWidth;
+    const heightScale = dimensions.height / baseHeight;
+    const scale = Math.min(widthScale, heightScale);
+    
+    return {
+      cpuSize: Math.max(64, Math.min(128, 96 * scale)), // Min 64px, Max 128px
+      branchLengthBase: Math.max(50, Math.min(200, 70 * scale)),
+      branchLengthVariation: Math.max(100, Math.min(250, 170 * scale)),
+      particleCount: Math.max(30, Math.min(70, Math.floor(50 * scale))),
+      branchThickness: Math.max(3, Math.min(8, 6 * scale)),
+      mouseGlowDistance: Math.max(70, Math.min(150, 100 * scale)),
+    };
+  });
+
   // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(({ cleanup }) => {            
+  useVisibleTask$(async ({ cleanup }) => {            
     if (!canvasRef.value || !containerRef.value) return;            
 
     const canvas = canvasRef.value;            
@@ -42,10 +60,9 @@ function useCPUVisualization({
     const MAX_PARTICLE_GLOW = 30;    
     const MAX_MOUSE_GLOW = 70;    
     const GLOW_DECAY_RATE = 0.2;    
-    const MOUSE_GLOW_DISTANCE = 100;  
 
-    const drawCPU = () => {    
-      const cpuSize = 96;    
+    const drawCPU = async () => {    
+      const { cpuSize } = await getScaleFactors();
       const innerSize = cpuSize * 0.8;    
       const x = cpuCenter.x;    
       const y = cpuCenter.y;    
@@ -56,8 +73,9 @@ function useCPUVisualization({
         Math.pow(mousePos.y - y, 2)  
       );  
 
-      if (mouseDistance <= MOUSE_GLOW_DISTANCE) {  
-        const mouseGlowIntensity = (1 - mouseDistance / MOUSE_GLOW_DISTANCE) * MAX_MOUSE_GLOW;  
+      const { mouseGlowDistance } = await getScaleFactors();
+      if (mouseDistance <= mouseGlowDistance) {  
+        const mouseGlowIntensity = (1 - mouseDistance / mouseGlowDistance) * MAX_MOUSE_GLOW;  
         cpuGlowIntensity = Math.max(cpuGlowIntensity, mouseGlowIntensity);  
       }  
 
@@ -117,23 +135,26 @@ function useCPUVisualization({
       cachedEndBranches = getAllBranches().filter(branch => !branch.children.length);      
     };      
 
-    const createRoots = () => {
+    const createRoots = async () => {
       const cpuRect = containerRef.value!.getBoundingClientRect();
+      dimensions.width = cpuRect.width;
+      dimensions.height = cpuRect.height;
+      
       cpuCenter.x = cpuRect.right - (cpuRect.width * (platform.isMobile.value ? -0.33: 0.33));
       cpuCenter.y = cpuRect.height / 2;
 
+      const { branchLengthBase, branchLengthVariation, branchThickness } = await getScaleFactors();
+
       roots = Array.from({ length: rootCount }, (_, i) => {
-        // Start angle from -PI to ensure even distribution
         const baseAngle = (i * Math.PI * 2 / rootCount) - Math.PI;
-        // Add small random variation
         const angle = baseAngle + (Math.random() * 0.2 - 0.1);
         
         return new Branch({
           startX: cpuCenter.x,
           startY: cpuCenter.y,
           angle,
-          length: 70 + Math.random() * 170, // Variation
-          thickness: 6,
+          length: branchLengthBase + Math.random() * branchLengthVariation,
+          thickness: branchThickness,
           generation: 0
         });
       });
@@ -142,10 +163,10 @@ function useCPUVisualization({
 
       // Pre-populate with particles
       particles = [];
-      const initialParticleCount = 50;
+      const { particleCount } = await getScaleFactors();
       const allBranches = getAllBranches();
 
-      for (let i = 0; i < initialParticleCount; i++) {
+      for (let i = 0; i < particleCount; i++) {
         const branchIndex = Math.floor(Math.pow(Math.random(), 2) * allBranches.length);
         const selectedBranch = allBranches[branchIndex];
         const particle = new Particle(selectedBranch, particleSpeed);
@@ -154,7 +175,7 @@ function useCPUVisualization({
       }
     }; 
 
-    const animate = (currentTime: number) => {            
+    const animate = async (currentTime: number) => {            
       animationFrame = requestAnimationFrame(animate);            
 
       const deltaTime = currentTime - lastFrameTime;      
@@ -174,6 +195,8 @@ function useCPUVisualization({
         root.draw(ctx, primaryColor);            
       });            
 
+      const { cpuSize, particleCount } = await getScaleFactors();
+
       particles = particles.filter(particle => {    
         const isComplete = particle.update();    
         if (!particle.dead) {    
@@ -182,10 +205,10 @@ function useCPUVisualization({
             Math.pow(point.x - cpuCenter.x, 2) +     
             Math.pow(point.y - cpuCenter.y, 2)    
           );    
-          if (distance <= 48 + 5) {    
-            cpuGlowIntensity = Math.min(  
+          if (distance <= cpuSize/2 + 5) {    
+            cpuGlowIntensity = Math.min(
               Math.max(cpuGlowIntensity, MAX_PARTICLE_GLOW),   
-              MAX_MOUSE_GLOW  
+              MAX_MOUSE_GLOW
             );    
           }    
           particle.draw(ctx, primaryColor);    
@@ -193,36 +216,34 @@ function useCPUVisualization({
         return !isComplete;    
       });        
 
-      if (particles.length < 50 && Math.random() < 0.05) {            
+      if (particles.length < particleCount && Math.random() < 0.05) {            
         if (cachedEndBranches.length) {            
           const randomBranch = cachedEndBranches[Math.floor(Math.random() * cachedEndBranches.length)];    
           particles.push(new Particle(randomBranch, particleSpeed));        
         }            
       }    
 
-      drawCPU();    
+      await drawCPU();    
     };            
 
-    const resizeObserver = new ResizeObserver(() => {
-      // Clear any existing timeout
+    const resizeObserver = new ResizeObserver(async () => {
       if (resizeTimeout.value !== null) {
         clearTimeout(resizeTimeout.value);
       }
 
-      // Set a new timeout
-      resizeTimeout.value = setTimeout(() => {
+      resizeTimeout.value = setTimeout(async () => {
         canvas.width = window.innerWidth;            
         canvas.height = window.innerHeight;  
 
-        // Store old particles
         const oldParticles = [...particles];
+
+        await createRoots();
 
         oldParticles.forEach(particle => {
           const oldPoint = particle.currentBranch.getPointAtProgress(particle.progress);
           let closestBranch = roots[0];
           let minDistance = Infinity;
 
-          // Find the closest new branch
           getAllBranches().forEach(branch => {
             const branchPoint = branch.getPointAtProgress(0.5);
             const distance = Math.hypot(
@@ -240,11 +261,10 @@ function useCPUVisualization({
 
         particles = oldParticles;
         resizeTimeout.value = null;
-      }, 150) as unknown as number; // Type assertion needed because setTimeout returns NodeJS.Timeout in some contexts
+      }, 150) as unknown as number;
     });            
     resizeObserver.observe(containerRef.value);
 
-    // Update the cleanup function
     cleanup(() => {
       if (resizeTimeout.value !== null) {
         clearTimeout(resizeTimeout.value);
@@ -253,7 +273,7 @@ function useCPUVisualization({
       resizeObserver.disconnect();
     });          
 
-    createRoots();            
+    await createRoots();            
     animate(0);                       
   });    
 
@@ -277,4 +297,4 @@ export const CPUVisualization = component$((props: CPUVisualizationProps) => {
       <canvas ref={canvasRef} class="absolute inset-0 blur-sm md:blur-none" />          
     </div>            
   );            
-});  
+});

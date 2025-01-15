@@ -2,12 +2,12 @@
 
 ## Primary Components
 
-- **Framework**: Built with [Qwik](https://qwik.dev/), with [React](https://react.dev/) integration.
+- **Framework**: Built with [Qwik](https://qwik.dev/), [Qwik City](https://qwik.dev/docs/qwikcity/) (routing), with [React](https://react.dev/) (one element only) integration.
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) and [Tailwind CSS Animate](https://github.com/jamiebuilds/tailwindcss-animate).
 - **Build Tools**: [Vite](https://vite.dev/) and [Bun](https://bun.sh/).
 - **Language**: [TypeScript](https://www.typescriptlang.org/).
 - **Utilities**: [Day.js](https://day.js.org/) (date handling), [Valibot](https://valibot.dev/) (validation), [Qwik LocalStorage](https://github.com/harshmangalam/qwik-localstorage), [Modular Forms](https://modularforms.dev/).
-- **Development Tools**: [ESLint](https://eslint.org/), [Prettier](https://prettier.io/), [PostCSS](https://postcss.org/).
+- **Server**: [Fastify](https://fastify.dev/).
 - **Runtime**: [Bun](https://bun.sh/), [Node.js](https://nodejs.org/).
 
 ## Dev
@@ -34,59 +34,32 @@ go-task build
 
 ### Front page (Desktop)
 
-<div style="display: flex; gap: 10px;">
-  <img src="assets/front-page-black-mode.png" alt="Black Mode Desktop" width="45%">
-  <img src="assets/front-page-light-mode.png" alt="Light Mode Desktop" width="45%">
-</div>
+| Black Mode Desktop | Light Mode Desktop |
+|-------------------|-------------------|
+| ![Black Mode Desktop](assets/front-page-black-mode.png) | ![Light Mode Desktop](assets/front-page-light-mode.png) |
 
-<br>
-<br>
-
-<div align="left">
-  <div align="center" style="display: inline-block; width: 45%; margin-right: 5px;">
-    <p>Search</p>
-    <img src="assets/front-page-search-black-mode.png" alt="Search Black Mode Desktop">
-  </div>
-</div>
-
-
----
+| Search |
+|--------|
+| ![Search Black Mode Desktop](assets/front-page-search-black-mode.png) |
 
 ### Front page (Mobile)
 
-<div style="display: flex; gap: 10px;">
-  <img src="assets/front-page-black-mode-mobile.png" alt="Black Mode Mobile" width="45%">
-  <img src="assets/front-page-light-mode-mobile.png" alt="Light Mode Mobile" width="45%">
-</div>
+| Black Mode Mobile | Light Mode Mobile |
+|------------------|-------------------|
+| ![Black Mode Mobile](assets/front-page-black-mode-mobile.png) | ![Light Mode Mobile](assets/front-page-light-mode-mobile.png) |
 
-<br>
-<br>
-
-<div align="left">
-  <div align="center" style="display: inline-block; width: 45%; margin-right: 5px;">
-    <p>Search</p>
-    <img src="assets/front-page-search-black-mode-mobile.png" alt="Search Black Mode Mobile">
-  </div>
-  <div align="center" style="display: inline-block; width: 45%;">
-    <p>Subjects menu</p>
-    <img src="assets/front-page-black-mode-mobile-2.png" alt="Black Mode Mobile 2">
-  </div>
-</div>
-
----
+| Search | Subjects menu |
+|--------|---------------|
+| ![Search Black Mode Mobile](assets/front-page-search-black-mode-mobile.png) | ![Black Mode Mobile 2](assets/front-page-black-mode-mobile-2.png) |
 
 ### Timetable page (Desktop)
 
-<div style="display: flex; gap: 10px;">
-  <img src="assets/timetable-page-black-mode.png" alt="Timetable Black Mode Desktop" width="45%">
-  <img src="assets/timetable-page-light-mode.png" alt="Timetable Light Mode Desktop" width="45%">
-</div>
-
----
+| Timetable Black Mode Desktop | Timetable Light Mode Desktop |
+|-----------------------------|----------------------------|
+| ![Timetable Black Mode Desktop](assets/timetable-page-black-mode.png) | ![Timetable Light Mode Desktop](assets/timetable-page-light-mode.png) |
 
 ### Timetable page (Mobile)
 
-<div style="display: flex; gap: 10px;">
-  <img src="assets/timetable-page-black-mode-mobile.png" alt="Timetable Black Mode Mobile" width="45%">
-  <img src="assets/timetable-page-light-mode-mobile.png" alt="Timetable Light Mode Mobile" width="45%">
-</div>
+| Timetable Black Mode Mobile | Timetable Light Mode Mobile |
+|----------------------------|----------------------------|
+| ![Timetable Black Mode Mobile](assets/timetable-page-black-mode-mobile.png) | ![Timetable Light Mode Mobile](assets/timetable-page-light-mode-mobile.png) |
